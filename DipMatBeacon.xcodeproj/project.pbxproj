@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D36691D31CFAD4CA00F8E4CC /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = D36691D21CFAD4CA00F8E4CC /* Reachability.m */; };
+		D36691D51CFAD50000F8E4CC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36691D41CFAD50000F8E4CC /* Constants.swift */; };
+		D36691D71CFAD74C00F8E4CC /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36691D61CFAD74C00F8E4CC /* Utils.swift */; };
+		D36691D91CFAD9CF00F8E4CC /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36691D81CFAD9CF00F8E4CC /* APIManager.swift */; };
 		D382B9081CF9E84700D5C0A8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D382B9071CF9E84700D5C0A8 /* AppDelegate.swift */; };
 		D382B90A1CF9E84700D5C0A8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D382B9091CF9E84700D5C0A8 /* ViewController.swift */; };
 		D382B90D1CF9E84700D5C0A8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D382B90B1CF9E84700D5C0A8 /* Main.storyboard */; };
@@ -15,6 +19,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D36691D01CFAD4CA00F8E4CC /* DipMatBeacon-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DipMatBeacon-Bridging-Header.h"; sourceTree = "<group>"; };
+		D36691D11CFAD4CA00F8E4CC /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		D36691D21CFAD4CA00F8E4CC /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		D36691D41CFAD50000F8E4CC /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		D36691D61CFAD74C00F8E4CC /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		D36691D81CFAD9CF00F8E4CC /* APIManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		D382B9041CF9E84700D5C0A8 /* DipMatBeacon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DipMatBeacon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D382B9071CF9E84700D5C0A8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D382B9091CF9E84700D5C0A8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -84,6 +94,7 @@
 		D382B91B1CFA074B00D5C0A8 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				D36691D81CFAD9CF00F8E4CC /* APIManager.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -101,6 +112,8 @@
 		D382B91D1CFA076100D5C0A8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				D36691D41CFAD50000F8E4CC /* Constants.swift */,
+				D36691D61CFAD74C00F8E4CC /* Utils.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -108,6 +121,9 @@
 		D382B91E1CFA076800D5C0A8 /* Obj-C */ = {
 			isa = PBXGroup;
 			children = (
+				D36691D11CFAD4CA00F8E4CC /* Reachability.h */,
+				D36691D21CFAD4CA00F8E4CC /* Reachability.m */,
+				D36691D01CFAD4CA00F8E4CC /* DipMatBeacon-Bridging-Header.h */,
 			);
 			name = "Obj-C";
 			sourceTree = "<group>";
@@ -184,8 +200,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D36691D91CFAD9CF00F8E4CC /* APIManager.swift in Sources */,
+				D36691D71CFAD74C00F8E4CC /* Utils.swift in Sources */,
 				D382B90A1CF9E84700D5C0A8 /* ViewController.swift in Sources */,
+				D36691D31CFAD4CA00F8E4CC /* Reachability.m in Sources */,
 				D382B9081CF9E84700D5C0A8 /* AppDelegate.swift in Sources */,
+				D36691D51CFAD50000F8E4CC /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,11 +320,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = DipMatBeacon/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = it.diegor.DipMatBeacon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "DipMatBeacon/DipMatBeacon-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -313,11 +336,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = DipMatBeacon/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = it.diegor.DipMatBeacon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "DipMatBeacon/DipMatBeacon-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -341,6 +366,7 @@
 				D382B9181CF9E84700D5C0A8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
