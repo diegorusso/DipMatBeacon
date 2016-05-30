@@ -13,25 +13,40 @@ class Schedule {
     
     // Data Encapsulation - can be set within the class
     private(set) var id:String
-    private(set) var title:String
-    private(set) var description:String
-    private(set) var type:String
+    private(set) var shortDescription:String
     private(set) var location:Location
+    private(set) var startingTime:NSDate
+    private(set) var endTime:NSDate
+    private(set) var duration:String
+    private(set) var longDescription:String
+    private(set) var bookingType:String
+    private(set) var createdBy:String
+    private(set) var approved:Bool
     private(set) var professor:String
-    private(set) var start:NSDate
-    private(set) var end:NSDate
+    private(set) var exam:Bool
+    private(set) var degree:String
+    private(set) var lastChange:NSDate
     
-    init(id:String, title:String, description:String, type:String, location:Location, professor:String, start:NSDate, end:NSDate){
+    
+    init(id:String, shortDescription:String, location:Location, startingTime:NSDate,
+         endTime:NSDate, duration:String, longDescription:String, bookingType:String,
+         createdBy:String, approved:Bool, professor:String, exam:Bool, degree:String,
+         lastChange:NSDate){
         
         self.id = id
-        self.title = title
-        self.description = description
-        self.type = type
+        self.shortDescription = shortDescription
         self.location = location
+        self.startingTime = startingTime
+        self.endTime = endTime
+        self.duration = duration
+        self.longDescription = longDescription
+        self.bookingType = bookingType
+        self.createdBy = createdBy
+        self.approved = approved
         self.professor = professor
-        self.start = start
-        self.end = end
-        
+        self.exam = exam
+        self.degree = degree
+        self.lastChange = lastChange
     }
     
     

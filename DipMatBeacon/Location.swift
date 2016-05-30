@@ -19,15 +19,15 @@ class Location{
     private(set) var mayor:Int
     private(set) var minor:Int
     
-    init(id:String, name:String, building:String, floor:String, mayor:Int, minor:Int){
+    init(id:String, name:String, building:String, floor:String, minor:Int, mayor:Int){
         
         self.id = id
         self.name = name
         self.building = building
         self.floor = floor
-        self.mayor = mayor
         self.minor = minor
-        
+        self.mayor = mayor
+
     }
     
 }
