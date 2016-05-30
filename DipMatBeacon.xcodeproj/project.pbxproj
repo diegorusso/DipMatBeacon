@@ -14,6 +14,12 @@
 		D36691DB1CFADDFD00F8E4CC /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36691DA1CFADDFD00F8E4CC /* Schedule.swift */; };
 		D36691DD1CFADED900F8E4CC /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36691DC1CFADED900F8E4CC /* Location.swift */; };
 		D36691DF1CFC898D00F8E4CC /* JSONDataExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36691DE1CFC898D00F8E4CC /* JSONDataExtractor.swift */; };
+		D36691E31CFCA26400F8E4CC /* extract_location.py in Resources */ = {isa = PBXBuildFile; fileRef = D36691E11CFCA26400F8E4CC /* extract_location.py */; };
+		D36691E41CFCA26400F8E4CC /* extract_schedule.py in Resources */ = {isa = PBXBuildFile; fileRef = D36691E21CFCA26400F8E4CC /* extract_schedule.py */; };
+		D36691E91CFCA27B00F8E4CC /* location.csv in Resources */ = {isa = PBXBuildFile; fileRef = D36691E51CFCA27B00F8E4CC /* location.csv */; };
+		D36691EA1CFCA27B00F8E4CC /* report.csv in Resources */ = {isa = PBXBuildFile; fileRef = D36691E61CFCA27B00F8E4CC /* report.csv */; };
+		D36691EB1CFCA27B00F8E4CC /* report_orig.csv in Resources */ = {isa = PBXBuildFile; fileRef = D36691E71CFCA27B00F8E4CC /* report_orig.csv */; };
+		D36691EC1CFCA27B00F8E4CC /* schedule.csv in Resources */ = {isa = PBXBuildFile; fileRef = D36691E81CFCA27B00F8E4CC /* schedule.csv */; };
 		D382B9081CF9E84700D5C0A8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D382B9071CF9E84700D5C0A8 /* AppDelegate.swift */; };
 		D382B90A1CF9E84700D5C0A8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D382B9091CF9E84700D5C0A8 /* ViewController.swift */; };
 		D382B90D1CF9E84700D5C0A8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D382B90B1CF9E84700D5C0A8 /* Main.storyboard */; };
@@ -31,6 +37,12 @@
 		D36691DA1CFADDFD00F8E4CC /* Schedule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		D36691DC1CFADED900F8E4CC /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		D36691DE1CFC898D00F8E4CC /* JSONDataExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONDataExtractor.swift; sourceTree = "<group>"; };
+		D36691E11CFCA26400F8E4CC /* extract_location.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = extract_location.py; sourceTree = "<group>"; };
+		D36691E21CFCA26400F8E4CC /* extract_schedule.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = extract_schedule.py; sourceTree = "<group>"; };
+		D36691E51CFCA27B00F8E4CC /* location.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = location.csv; sourceTree = "<group>"; };
+		D36691E61CFCA27B00F8E4CC /* report.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = report.csv; sourceTree = "<group>"; };
+		D36691E71CFCA27B00F8E4CC /* report_orig.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = report_orig.csv; sourceTree = "<group>"; };
+		D36691E81CFCA27B00F8E4CC /* schedule.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = schedule.csv; sourceTree = "<group>"; };
 		D382B9041CF9E84700D5C0A8 /* DipMatBeacon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DipMatBeacon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D382B9071CF9E84700D5C0A8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D382B9091CF9E84700D5C0A8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -51,6 +63,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D36691E01CFCA21C00F8E4CC /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				D36691E51CFCA27B00F8E4CC /* location.csv */,
+				D36691E61CFCA27B00F8E4CC /* report.csv */,
+				D36691E71CFCA27B00F8E4CC /* report_orig.csv */,
+				D36691E81CFCA27B00F8E4CC /* schedule.csv */,
+				D36691E11CFCA26400F8E4CC /* extract_location.py */,
+				D36691E21CFCA26400F8E4CC /* extract_schedule.py */,
+			);
+			name = scripts;
+			sourceTree = "<group>";
+		};
 		D382B8FB1CF9E84700D5C0A8 = {
 			isa = PBXGroup;
 			children = (
@@ -70,6 +95,7 @@
 		D382B9061CF9E84700D5C0A8 /* DipMatBeacon */ = {
 			isa = PBXGroup;
 			children = (
+				D36691E01CFCA21C00F8E4CC /* scripts */,
 				D382B91E1CFA076800D5C0A8 /* Obj-C */,
 				D382B91D1CFA076100D5C0A8 /* Utils */,
 				D382B91C1CFA075400D5C0A8 /* Supporting Files */,
@@ -197,7 +223,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				D382B9121CF9E84700D5C0A8 /* LaunchScreen.storyboard in Resources */,
+				D36691E91CFCA27B00F8E4CC /* location.csv in Resources */,
+				D36691E31CFCA26400F8E4CC /* extract_location.py in Resources */,
+				D36691E41CFCA26400F8E4CC /* extract_schedule.py in Resources */,
 				D382B90F1CF9E84700D5C0A8 /* Assets.xcassets in Resources */,
+				D36691EB1CFCA27B00F8E4CC /* report_orig.csv in Resources */,
+				D36691EA1CFCA27B00F8E4CC /* report.csv in Resources */,
+				D36691EC1CFCA27B00F8E4CC /* schedule.csv in Resources */,
 				D382B90D1CF9E84700D5C0A8 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
