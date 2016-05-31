@@ -1,26 +1,108 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="b6n-Gp-geR">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
-        <scene sceneID="tne-QT-ifu">
+        <!--Root View Controller-->
+        <scene sceneID="9Jh-CO-yoh">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="DipMatBeacon" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
-                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                <tableViewController id="Xcr-xK-7qo" customClass="ScheduleTVC" customModule="DipMatBeacon" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="100" sectionHeaderHeight="28" sectionFooterHeight="28" id="VmW-xI-KsS">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="cell" rowHeight="100" id="bPy-Ca-Cvq" customClass="ScheduleTableViewCell" customModule="DipMatBeacon" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="92" width="600" height="100"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bPy-Ca-Cvq" id="UW6-Wy-f5P">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="100"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="shortDescription" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xuR-nj-zZ2">
+                                            <rect key="frame" x="8" y="8" width="584" height="25"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="professor" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EfP-py-JwJ">
+                                            <rect key="frame" x="8" y="39" width="292" height="21"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="21" id="ZEC-GS-gay"/>
+                                                <constraint firstAttribute="width" constant="292" id="uTw-eW-f42"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="location" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lkB-1C-J8L">
+                                            <rect key="frame" x="8" y="68" width="292" height="21"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="time" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hmh-IG-XMP">
+                                            <rect key="frame" x="8" y="68" width="584" height="21"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <constraints>
+                                        <constraint firstItem="EfP-py-JwJ" firstAttribute="leading" secondItem="Hmh-IG-XMP" secondAttribute="leading" id="4dS-wp-eb3"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="lkB-1C-J8L" secondAttribute="bottom" constant="2.5" id="4y4-Zp-VsF"/>
+                                        <constraint firstItem="EfP-py-JwJ" firstAttribute="trailing" secondItem="lkB-1C-J8L" secondAttribute="trailing" id="5I1-CC-ZEX"/>
+                                        <constraint firstItem="Hmh-IG-XMP" firstAttribute="bottom" secondItem="lkB-1C-J8L" secondAttribute="bottom" id="9Uy-z8-Ixv"/>
+                                        <constraint firstItem="xuR-nj-zZ2" firstAttribute="top" secondItem="UW6-Wy-f5P" secondAttribute="topMargin" id="Bbb-a2-Bsa"/>
+                                        <constraint firstItem="xuR-nj-zZ2" firstAttribute="leading" secondItem="EfP-py-JwJ" secondAttribute="leading" id="DTm-dp-QvS"/>
+                                        <constraint firstItem="EfP-py-JwJ" firstAttribute="top" secondItem="xuR-nj-zZ2" secondAttribute="bottom" constant="6" id="DVZ-PC-DjC"/>
+                                        <constraint firstItem="lkB-1C-J8L" firstAttribute="leading" secondItem="Hmh-IG-XMP" secondAttribute="leading" id="Ley-92-UxK"/>
+                                        <constraint firstItem="xuR-nj-zZ2" firstAttribute="trailing" secondItem="Hmh-IG-XMP" secondAttribute="trailing" id="MD3-cr-H4B"/>
+                                        <constraint firstItem="xuR-nj-zZ2" firstAttribute="leading" secondItem="UW6-Wy-f5P" secondAttribute="leadingMargin" id="THt-1d-Qaw"/>
+                                        <constraint firstItem="EfP-py-JwJ" firstAttribute="centerY" secondItem="UW6-Wy-f5P" secondAttribute="centerY" id="hhi-kN-aZy"/>
+                                        <constraint firstItem="xuR-nj-zZ2" firstAttribute="trailing" secondItem="UW6-Wy-f5P" secondAttribute="trailingMargin" id="kTq-vr-VkQ"/>
+                                        <constraint firstItem="lkB-1C-J8L" firstAttribute="top" secondItem="EfP-py-JwJ" secondAttribute="bottom" constant="8" symbolic="YES" id="o0w-6n-ucf"/>
+                                        <constraint firstItem="lkB-1C-J8L" firstAttribute="top" secondItem="Hmh-IG-XMP" secondAttribute="top" id="uto-ur-C1w"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="location" destination="lkB-1C-J8L" id="sr5-oe-6Kx"/>
+                                    <outlet property="professor" destination="EfP-py-JwJ" id="g7x-LT-7sd"/>
+                                    <outlet property="shortDescription" destination="xuR-nj-zZ2" id="RLo-X7-0oH"/>
+                                    <outlet property="time" destination="Hmh-IG-XMP" id="mQ2-UK-vXn"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Xcr-xK-7qo" id="RAq-J1-bk3"/>
+                            <outlet property="delegate" destination="Xcr-xK-7qo" id="OHO-IY-PiT"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Root View Controller" id="13B-T3-y5H"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="WLO-Nc-a69" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="946" y="405"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="0Su-ah-wFg">
+            <objects>
+                <navigationController id="b6n-Gp-geR" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="xcc-6f-U3t">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="Xcr-xK-7qo" kind="relationship" relationship="rootViewController" id="7Fh-9P-zfh"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PXU-MP-Vxq" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="126" y="405"/>
         </scene>
     </scenes>
 </document>
