@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
-        addObserver(kReachabilityChangedNotification, with: #selector(AppDelegate.reachabilityChanged(_:)))
+        registerObserver(kReachabilityChangedNotification, instance: self, with: #selector(AppDelegate.reachabilityChanged(_:)))
         
         checkInternet()
         
@@ -51,24 +51,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         
-        removeObserver(kReachabilityChangedNotification)
+        deregisterObserver(kReachabilityChangedNotification, instance: self)
     }
     
     
 }
 
 extension AppDelegate{
-    
-    func addObserver(observerName: String, with selector: Selector){
-        // Add observer: when I receive kReachabilityChangedNotification I execute reachabilityChanged
-        // _: after the selector means there is a parameter
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: selector, name: observerName, object: nil)
-    }
-    
-    func removeObserver(observerName: String){
-        // Remove the observer added at the top
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: observerName, object: nil)
-    }
     
     func checkInternet(){
         // I need to run this because the first time I don't have a notification to tell me if I have internet or not.
