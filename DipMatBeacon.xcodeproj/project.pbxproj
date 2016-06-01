@@ -24,6 +24,7 @@
 		D382B90D1CF9E84700D5C0A8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D382B90B1CF9E84700D5C0A8 /* Main.storyboard */; };
 		D382B90F1CF9E84700D5C0A8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D382B90E1CF9E84700D5C0A8 /* Assets.xcassets */; };
 		D382B9121CF9E84700D5C0A8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D382B9101CF9E84700D5C0A8 /* LaunchScreen.storyboard */; };
+		D3DCFA8C1CFE2E2600A36309 /* ScheduleDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DCFA8B1CFE2E2600A36309 /* ScheduleDetailsVC.swift */; };
 		D3EADA8E1CFD6EF100E7B1B0 /* report.csv in Resources */ = {isa = PBXBuildFile; fileRef = D3EADA8D1CFD6EF100E7B1B0 /* report.csv */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		D382B90E1CF9E84700D5C0A8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D382B9111CF9E84700D5C0A8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D382B9131CF9E84700D5C0A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D3DCFA8B1CFE2E2600A36309 /* ScheduleDetailsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduleDetailsVC.swift; sourceTree = "<group>"; };
 		D3EADA8D1CFD6EF100E7B1B0 /* report.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = report.csv; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -117,6 +119,7 @@
 		D382B91A1CFA074500D5C0A8 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				D3DCFA8B1CFE2E2600A36309 /* ScheduleDetailsVC.swift */,
 				D382B9091CF9E84700D5C0A8 /* ScheduleTVC.swift */,
 				D36691ED1CFCAEFA00F8E4CC /* ScheduleTableViewCell.swift */,
 			);
@@ -245,6 +248,7 @@
 				D36691DF1CFC898D00F8E4CC /* JSONDataExtractor.swift in Sources */,
 				D36691DD1CFADED900F8E4CC /* Location.swift in Sources */,
 				D382B90A1CF9E84700D5C0A8 /* ScheduleTVC.swift in Sources */,
+				D3DCFA8C1CFE2E2600A36309 /* ScheduleDetailsVC.swift in Sources */,
 				D36691D31CFAD4CA00F8E4CC /* Reachability.m in Sources */,
 				D36691EE1CFCAEFA00F8E4CC /* ScheduleTableViewCell.swift in Sources */,
 				D382B9081CF9E84700D5C0A8 /* AppDelegate.swift in Sources */,

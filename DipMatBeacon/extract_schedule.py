@@ -14,8 +14,8 @@ sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 
 def create_schedule(reportfd, schedulefd):
     fieldnames=['short_description', 'location', 'starting_time', 'end_time', 'duration',
-                'long_description', 'booking_type', 'created_by', 'approved', 'professor',
-                'exam', 'degree', 'last_change']
+                'long_description', 'correspondence','booking_type', 'created_by', 'approved',
+                'professor', 'exam', 'degree', 'last_change']
     writer = csv.DictWriter(schedulefd, fieldnames=fieldnames)
     writer.writeheader()
     reader = csv.DictReader(reportfd)
@@ -27,6 +27,7 @@ def create_schedule(reportfd, schedulefd):
                     'end_time': _extract_datetime(row['Ora Fine']),
                     'duration': row['Durata'],
                     'long_description': row['Descrizione completa'],
+                    'correspondence': row['Corrispondenza'],
                     'booking_type': row['Tipo di prenotazione'],
                     'created_by': row['Creato da'],
                     'approved': _convert_to_bool(row['Stato dell\'approvazione']),
