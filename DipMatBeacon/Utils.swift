@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 
 func dateFromString(dateString:String) -> NSDate {
@@ -23,6 +24,22 @@ func timeFromDate(date:NSDate) -> String {
     dateFormatter.timeZone = NSTimeZone(name: "UTC")
     let time: String = dateFormatter.stringFromDate(date)
     return time
+}
+
+
+func correspondenceColor(correspondence:String) -> UIColor {
+    var bgColor: UIColor
+    
+    switch correspondence {
+    case "CdS interno del Dipartimento":
+        bgColor = LIGHTGREEN
+    case "Altro":
+        bgColor = LIGHTBLUE
+    default:
+        bgColor = LIGHTGREY
+    }
+    
+    return bgColor
 }
 
 
