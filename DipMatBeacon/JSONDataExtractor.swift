@@ -66,7 +66,7 @@ class JSONDataExtractor {
                 let _emptyLocation = Location(id: "", name: "", building: "", floor: "", minor: 0, mayor: 0)
                 
                 var scheduleId = "", shortDescription = "", location = _emptyLocation, startingTime = NSDate(), endTime = NSDate(), duration = "", longDescription = "",
-                bookingType = "", createdBy = "", approved = false, professor = "", exam = false, degree = "", lastChange = NSDate()
+                correspondence = "", bookingType = "", createdBy = "", approved = false, professor = "", exam = false, degree = "", lastChange = NSDate()
                 
                 // id
                 if let dataId = data["id"] as? String {
@@ -104,6 +104,11 @@ class JSONDataExtractor {
                     longDescription = dataLongDescription
                 }
                 
+                // correspondence
+                if let dataCorrespondence = data["correspondence"] as? String {
+                    correspondence = dataCorrespondence
+                }
+                
                 // booking_type
                 if let dataBookingType = data["booking_type"] as? String {
                     bookingType = dataBookingType
@@ -139,7 +144,7 @@ class JSONDataExtractor {
                     lastChange = dateFromString(dataLastChange)
                 }
 
-                let currentSchedule = Schedule(id: scheduleId, shortDescription: shortDescription, location: location, startingTime: startingTime, endTime: endTime, duration: duration, longDescription: longDescription, bookingType: bookingType, createdBy: createdBy, approved: approved, professor: professor, exam: exam, degree: degree, lastChange: lastChange)
+                let currentSchedule = Schedule(id: scheduleId, shortDescription: shortDescription, location: location, startingTime: startingTime, endTime: endTime, duration: duration, longDescription: longDescription, correspondence: correspondence, bookingType: bookingType, createdBy: createdBy, approved: approved, professor: professor, exam: exam, degree: degree, lastChange: lastChange)
                 
                 schedules.append(currentSchedule)
             }

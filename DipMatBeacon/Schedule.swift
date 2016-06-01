@@ -19,6 +19,7 @@ class Schedule {
     private(set) var endTime:NSDate
     private(set) var duration:String
     private(set) var longDescription:String
+    private(set) var correspondence:String
     private(set) var bookingType:String
     private(set) var createdBy:String
     private(set) var approved:Bool
@@ -29,9 +30,9 @@ class Schedule {
     
     
     init(id:String, shortDescription:String, location:Location, startingTime:NSDate,
-         endTime:NSDate, duration:String, longDescription:String, bookingType:String,
-         createdBy:String, approved:Bool, professor:String, exam:Bool, degree:String,
-         lastChange:NSDate){
+         endTime:NSDate, duration:String, longDescription:String, correspondence:String,
+         bookingType:String, createdBy:String, approved:Bool, professor:String, exam:Bool,
+         degree:String, lastChange:NSDate){
         
         self.id = id
         self.shortDescription = shortDescription
@@ -40,6 +41,7 @@ class Schedule {
         self.endTime = endTime
         self.duration = duration
         self.longDescription = longDescription
+        self.correspondence = correspondence
         self.bookingType = bookingType
         self.createdBy = createdBy
         self.approved = approved
