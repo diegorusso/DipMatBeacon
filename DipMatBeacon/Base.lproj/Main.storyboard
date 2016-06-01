@@ -6,7 +6,7 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--Root View Controller-->
+        <!--ScheduleTVC-->
         <scene sceneID="9Jh-CO-yoh">
             <objects>
                 <tableViewController id="Xcr-xK-7qo" customClass="ScheduleTVC" customModule="DipMatBeacon" customModuleProvider="target" sceneMemberID="viewController">
@@ -19,7 +19,7 @@
                                 <rect key="frame" x="0.0" y="92" width="600" height="100"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bPy-Ca-Cvq" id="UW6-Wy-f5P">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="100"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="99.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="shortDescription" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xuR-nj-zZ2">
@@ -51,7 +51,6 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
-                                    <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                     <constraints>
                                         <constraint firstItem="EfP-py-JwJ" firstAttribute="leading" secondItem="Hmh-IG-XMP" secondAttribute="leading" id="4dS-wp-eb3"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="lkB-1C-J8L" secondAttribute="bottom" constant="2.5" id="4y4-Zp-VsF"/>
@@ -74,6 +73,7 @@
                                     <outlet property="professor" destination="EfP-py-JwJ" id="g7x-LT-7sd"/>
                                     <outlet property="shortDescription" destination="xuR-nj-zZ2" id="RLo-X7-0oH"/>
                                     <outlet property="time" destination="Hmh-IG-XMP" id="mQ2-UK-vXn"/>
+                                    <segue destination="Tlf-7E-Ht4" kind="show" identifier="scheduleDetail" id="e6P-to-qLN"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -82,20 +82,84 @@
                             <outlet property="delegate" destination="Xcr-xK-7qo" id="OHO-IY-PiT"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="13B-T3-y5H"/>
+                    <navigationItem key="navigationItem" id="13B-T3-y5H"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WLO-Nc-a69" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="946" y="405"/>
         </scene>
+        <!--Schedule DetailsVC-->
+        <scene sceneID="NQf-qI-ySN">
+            <objects>
+                <viewController modalPresentationStyle="overFullScreen" id="Tlf-7E-Ht4" customClass="ScheduleDetailsVC" customModule="DipMatBeacon" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="uFZ-1A-dcQ"/>
+                        <viewControllerLayoutGuide type="bottom" id="Ao1-07-i77"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="ecQ-Et-qyC">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="shortDescription" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kqa-vJ-dgi">
+                                <rect key="frame" x="20" y="64" width="560" height="40"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="longDescription" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qz9-oV-VO9">
+                                <rect key="frame" x="20" y="112" width="560" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="FKt-p8-1KS"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="professor" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8EU-3s-9ZL">
+                                <rect key="frame" x="20" y="140" width="560" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="gpL-hv-4vG"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="kqa-vJ-dgi" firstAttribute="trailing" secondItem="Qz9-oV-VO9" secondAttribute="trailing" id="3G7-dd-YQX"/>
+                            <constraint firstItem="8EU-3s-9ZL" firstAttribute="top" secondItem="Qz9-oV-VO9" secondAttribute="bottom" constant="8" symbolic="YES" id="Bas-BF-pLk"/>
+                            <constraint firstItem="kqa-vJ-dgi" firstAttribute="leading" secondItem="ecQ-Et-qyC" secondAttribute="leadingMargin" id="CDF-hN-tMQ"/>
+                            <constraint firstItem="Qz9-oV-VO9" firstAttribute="leading" secondItem="8EU-3s-9ZL" secondAttribute="leading" id="DwA-Mj-Zup"/>
+                            <constraint firstItem="Ao1-07-i77" firstAttribute="top" secondItem="8EU-3s-9ZL" secondAttribute="bottom" constant="395" id="OdL-Yr-e2m"/>
+                            <constraint firstItem="kqa-vJ-dgi" firstAttribute="leading" secondItem="Qz9-oV-VO9" secondAttribute="leading" id="ZUZ-oP-IC2"/>
+                            <constraint firstItem="Qz9-oV-VO9" firstAttribute="trailing" secondItem="8EU-3s-9ZL" secondAttribute="trailing" id="dD7-DS-Apt"/>
+                            <constraint firstItem="Qz9-oV-VO9" firstAttribute="top" secondItem="kqa-vJ-dgi" secondAttribute="bottom" constant="8" symbolic="YES" id="iwH-bd-whN"/>
+                            <constraint firstItem="kqa-vJ-dgi" firstAttribute="trailing" secondItem="ecQ-Et-qyC" secondAttribute="trailingMargin" id="oCi-7X-h5Q"/>
+                            <constraint firstItem="kqa-vJ-dgi" firstAttribute="top" secondItem="uFZ-1A-dcQ" secondAttribute="bottom" id="wCC-cR-3CO"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="longDescription" destination="Qz9-oV-VO9" id="R0B-vg-NqW"/>
+                        <outlet property="professor" destination="8EU-3s-9ZL" id="W0J-aU-bzL"/>
+                        <outlet property="shortDescription" destination="kqa-vJ-dgi" id="dVY-IZ-boS"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yP6-sZ-8Ks" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1664" y="405"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="0Su-ah-wFg">
             <objects>
-                <navigationController id="b6n-Gp-geR" sceneMemberID="viewController">
+                <navigationController toolbarHidden="NO" id="b6n-Gp-geR" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="xcc-6f-U3t">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="FJy-7y-6sg">
+                        <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="Xcr-xK-7qo" kind="relationship" relationship="rootViewController" id="7Fh-9P-zfh"/>
                     </connections>

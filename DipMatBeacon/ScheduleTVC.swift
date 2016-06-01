@@ -37,7 +37,11 @@ extension ScheduleTVC{
         
         self.schedules = schedules
         
-        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.redColor()]
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: LIGHTGREY]
+        navigationController?.navigationBar.barTintColor = DARKGREY
+        navigationController?.navigationBar.tintColor = LIGHTGREY
+        navigationController?.toolbar.barTintColor = DARKGREY
+        
         title = ("MRBS")
         
         tableView.reloadData()
@@ -104,6 +108,15 @@ extension ScheduleTVC {
     }
     
     
+    // This method is to change the color of the cells
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        let schedule = schedules[indexPath.row]
+        
+        cell.backgroundColor = correspondenceColor(schedule.correspondence)
+    }
+    
+    
     /*
      // Override to support conditional editing of the table view.
      override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -138,5 +151,24 @@ extension ScheduleTVC {
      return true
      }
      */
+}
+
+extension ScheduleTVC {
+    
+    // MARK: - Navigation
+    
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "scheduleDetail" {
+            if let indexPath = tableView.indexPathForSelectedRow {
+                
+                let schedule = schedules[indexPath.row]
+            
+                let dvc = segue.destinationViewController as! ScheduleDetailsVC
+                dvc.schedule = schedule
+            }
+        }
+    }
+
 }
 
