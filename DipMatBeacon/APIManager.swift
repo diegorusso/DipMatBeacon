@@ -14,11 +14,11 @@ class APIManager{
         
         // An ephemeral session has no persistent disk storage for cookies,
         // cache or credentials.
-        let config = NSURLSessionConfiguration.ephemeralSessionConfiguration()
-        let session = NSURLSession(configuration: config)
+        //let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+        //let session = NSURLSession(configuration: config)
         
         // Singleton disegn pattern
-        //let session = NSURLSession.sharedSession()
+        let session = NSURLSession.sharedSession()
         let url = NSURL(string: urlString)!
         
         // Async communication call in background thread

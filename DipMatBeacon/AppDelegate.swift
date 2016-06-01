@@ -18,11 +18,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var internetCheck: Reachability?
     
-    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
         registerObserver(kReachabilityChangedNotification, instance: self, with: #selector(AppDelegate.reachabilityChanged(_:)))
+        
+        setCache()
         
         checkInternet()
         
@@ -58,6 +59,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 extension AppDelegate{
+    
+    func setCache(){
+        let URLCache = NSURLCache(memoryCapacity: 4 * 1024 * 1024, diskCapacity: 20 * 1024 * 1024, diskPath: nil)
+        NSURLCache.setSharedURLCache(URLCache)
+    }
     
     func checkInternet(){
         // I need to run this because the first time I don't have a notification to tell me if I have internet or not.
