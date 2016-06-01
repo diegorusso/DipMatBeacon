@@ -12,6 +12,12 @@ class ScheduleTVC: UITableViewController {
     
     // Gobal Variables - cannot be in the extension
     var schedules = [Schedule]()
+    
+    var sectionSchedules = [String: [Schedule]]()
+    var sortedSections = [String]()
+    
+    @IBOutlet weak var nowButton: UIBarButtonItem!
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,13 +28,6 @@ class ScheduleTVC: UITableViewController {
         // Just call it the first time
         reachabilityStatusChanged()
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-
 }
 
 extension ScheduleTVC{
@@ -36,11 +35,19 @@ extension ScheduleTVC{
     func didLoadData(schedules: [Schedule]) {
         
         self.schedules = schedules
+    
+        // This is done through an extension of SequenceType (see Utils.swift)
+        self.sectionSchedules = self.schedules.categorise{sectionHeaderFromDate($0.startingTime)}
+        
+        // Let's have an array of sorted String
+        self.sortedSections = self.sectionSchedules.keys.elements.sort({$0.compare($1) == NSComparisonResult.OrderedAscending })
         
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: LIGHTGREY]
         navigationController?.navigationBar.barTintColor = DARKGREY
         navigationController?.navigationBar.tintColor = LIGHTGREY
         navigationController?.toolbar.barTintColor = DARKGREY
+        nowButton.enabled = true
+        nowButton.tintColor = LIGHTGREY
         
         title = ("MRBS")
         
@@ -85,6 +92,23 @@ extension ScheduleTVC{
             }
         }
     }
+    
+    @IBAction func moveToCurrentSchedule(sender: UIBarButtonItem) {
+        let now = NSDate()
+        let currentTimeSectionHeader = sectionHeaderFromDate(now)
+        var nearestSection = 0
+        
+        for (index, section) in sortedSections.enumerate(){
+            if currentTimeSectionHeader < section {
+                nearestSection = index
+                break
+            }
+        }
+        
+        let indexPath = NSIndexPath(forItem: 0, inSection: nearestSection)
+        tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: UITableViewScrollPosition.Top, animated: true)
+    }
+    
 }
 
 extension ScheduleTVC {
@@ -92,65 +116,50 @@ extension ScheduleTVC {
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return self.sectionSchedules.count
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return schedules.count
+        return self.sectionSchedules[sortedSections[section]]!.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! ScheduleTableViewCell
         
-        cell.schedule = schedules[indexPath.row]
+        // get the items in this section
+        let sectionItems = self.sectionSchedules[sortedSections[indexPath.section]]
+        // get the item for the row in this section
+        cell.schedule = sectionItems![indexPath.row]
 
         return cell
     }
     
     
-    // This method is to change the color of the cells
+    // This method changes the color of the cells
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         
-        let schedule = schedules[indexPath.row]
+        // get the items in this section
+        let sectionItems = self.sectionSchedules[sortedSections[indexPath.section]]
+        // get the item for the row in this section
+        let schedule = sectionItems![indexPath.row]
         
         cell.backgroundColor = correspondenceColor(schedule.correspondence)
     }
     
+
     
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
-    
-    /*
-     // Override to support editing the table view.
-     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-     if editingStyle == .Delete {
-     // Delete the row from the data source
-     tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-     } else if editingStyle == .Insert {
-     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-     }
-     }
-     */
-    
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-     
-     }
-     */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
+    // This method changes the color of the section header
+    override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let returnedView = UIView(frame: CGRectMake(0, 0, tableView.bounds.size.width, 30))
+        returnedView.backgroundColor = LIGHTGREY
+        
+        let label = UILabel(frame: CGRectMake(10, 0, tableView.bounds.size.width, 30))
+        label.text = self.sortedSections[section]
+        label.textColor = DARKGREY
+        returnedView.addSubview(label)
+        
+        return returnedView
+    }
 }
 
 extension ScheduleTVC {
@@ -162,7 +171,10 @@ extension ScheduleTVC {
         if segue.identifier == "scheduleDetail" {
             if let indexPath = tableView.indexPathForSelectedRow {
                 
-                let schedule = schedules[indexPath.row]
+                // get the items in this section
+                let sectionItems = self.sectionSchedules[sortedSections[indexPath.section]]
+                // get the item for the row in this section
+                let schedule = sectionItems![indexPath.row]
             
                 let dvc = segue.destinationViewController as! ScheduleDetailsVC
                 dvc.schedule = schedule
