@@ -16,11 +16,27 @@ class ScheduleTVC: UITableViewController {
     var sectionSchedules = [String: [Schedule]]()
     var sortedSections = [String]()
     
+    // That's for the search
+    var filterSearch = [Schedule]()
+    let resultSearchController = UISearchController(searchResultsController: nil)
+    
+    var loadingLabel = UILabel()
+    
     @IBOutlet weak var nowButton: UIBarButtonItem!
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        loadingLabel = UILabel(frame: CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height))
+        
+        loadingLabel.text = "Caricamento dati..."
+        loadingLabel.textColor = DARKGREY
+        loadingLabel.numberOfLines = 0
+        loadingLabel.textAlignment = NSTextAlignment.Center
+        loadingLabel.sizeToFit()
+        
+        self.tableView.backgroundView = loadingLabel
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
         // Do any additional setup after loading the view, typically from a nib.
         registerObserver("ReachStatusChanged", instance: self, with: #selector(ScheduleTVC.reachabilityStatusChanged))
@@ -28,20 +44,27 @@ class ScheduleTVC: UITableViewController {
         // Just call it the first time
         reachabilityStatusChanged()
     }
+    
+    @IBAction func refresh(sender: UIRefreshControl) {
+        refreshControl?.endRefreshing()
+        
+        if resultSearchController.active {
+            refreshControl?.attributedTitle = NSAttributedString(string: "No refresh allowed in search")
+        } else {
+            runAPI()
+        }
+    }
 }
 
-extension ScheduleTVC{
+extension ScheduleTVC: UISearchResultsUpdating{
     
     func didLoadData(schedules: [Schedule]) {
         
         self.schedules = schedules
-    
-        // This is done through an extension of SequenceType (see Utils.swift)
-        self.sectionSchedules = self.schedules.categorise{sectionHeaderFromDate($0.startingTime)}
         
-        // Let's have an array of sorted String
-        self.sortedSections = self.sectionSchedules.keys.elements.sort({$0.compare($1) == NSComparisonResult.OrderedAscending })
+        updateSections(self.schedules)
         
+        //NavigationController
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: LIGHTGREY]
         navigationController?.navigationBar.barTintColor = DARKGREY
         navigationController?.navigationBar.tintColor = LIGHTGREY
@@ -49,13 +72,34 @@ extension ScheduleTVC{
         nowButton.enabled = true
         nowButton.tintColor = LIGHTGREY
         
-        title = ("MRBS")
+        title = ("DMI - MRBS")
+        
+        // That's the search
+        resultSearchController.searchResultsUpdater = self
+        definesPresentationContext = true
+        // That's very important: if it is true, during search I cannot do anything and when you click on a video you come back to the original view
+        resultSearchController.dimsBackgroundDuringPresentation = false
+        resultSearchController.searchBar.placeholder = "Cerca..."
+        resultSearchController.searchBar.searchBarStyle = UISearchBarStyle.Prominent
+        tableView.tableHeaderView = resultSearchController.searchBar
+        
+        loadingLabel.hidden = true
         
         tableView.reloadData()
         
     }
     
+    func updateSections(schedules: [Schedule]){
+        // This is done through an extension of SequenceType (see Utils.swift)
+        self.sectionSchedules = schedules.categorise{sectionHeaderFromDate($0.startingTime)}
+        
+        // Let's have an array of sorted String
+        self.sortedSections = self.sectionSchedules.keys.elements.sort({$0.compare($1) == NSComparisonResult.OrderedAscending })
+    }
+    
     func runAPI() {
+        setRefreshTimestamp()
+        
         // Call API
         let api = APIManager()
         let urlApi = "https://ibeacon.stamplayapp.com/api/cobject/v1/schedule?per_page=all&populate=true&sort=start"
@@ -109,14 +153,50 @@ extension ScheduleTVC{
         tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: UITableViewScrollPosition.Top, animated: true)
     }
     
+    func filterSearch(searchText: String){
+        filterSearch = schedules.filter { schedules in
+            return schedules.shortDescription.lowercaseString.containsString(searchText.lowercaseString)
+        }
+
+        if resultSearchController.active {
+            updateSections(filterSearch)
+        } else {
+            updateSections(self.schedules)
+        }
+        
+        tableView.reloadData()
+        
+    }
+    
+    func updateSearchResultsForSearchController(searchController: UISearchController) {
+        searchController.searchBar.text!.lowercaseString
+        filterSearch(searchController.searchBar.text!)
+    }
+    
+    func setRefreshTimestamp(){
+        // Let's show when the API were run
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = "E, dd MMM yyyy HH:mm:ss"
+        let refreshDate = formatter.stringFromDate(NSDate())
+        
+        refreshControl?.attributedTitle = NSAttributedString(string: "\(refreshDate)")
+    }
+    
 }
 
 extension ScheduleTVC {
     // MARK: - Table view data source
     
+    
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return self.sectionSchedules.count
+        
+        
+        if self.schedules.count > 0 {
+            return self.sectionSchedules.count
+        } else {
+            return 0
+        }
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -130,7 +210,7 @@ extension ScheduleTVC {
         let sectionItems = self.sectionSchedules[sortedSections[indexPath.section]]
         // get the item for the row in this section
         cell.schedule = sectionItems![indexPath.row]
-
+        
         return cell
     }
     
@@ -144,9 +224,9 @@ extension ScheduleTVC {
         let schedule = sectionItems![indexPath.row]
         
         cell.backgroundColor = correspondenceColor(schedule.correspondence)
+        cell.layer.borderWidth = 0.5
+        cell.layer.borderColor = DARKGREY.CGColor
     }
-    
-
     
     // This method changes the color of the section header
     override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -175,12 +255,12 @@ extension ScheduleTVC {
                 let sectionItems = self.sectionSchedules[sortedSections[indexPath.section]]
                 // get the item for the row in this section
                 let schedule = sectionItems![indexPath.row]
-            
+                
                 let dvc = segue.destinationViewController as! ScheduleDetailsVC
                 dvc.schedule = schedule
             }
         }
     }
-
+    
 }
 
