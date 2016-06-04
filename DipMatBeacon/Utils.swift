@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 
-func dateFromString(dateString:String) -> NSDate {
+func timestampFromString(dateString:String) -> NSDate {
     let dateFormatter = NSDateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'.000Z'"
     dateFormatter.timeZone = NSTimeZone(name: "Europe/London")
@@ -18,21 +18,32 @@ func dateFromString(dateString:String) -> NSDate {
     return date
 }
 
-func timeFromDate(date:NSDate) -> String {
+
+// Functions to extract part of the timestamp
+
+func stringFromDate(date:NSDate, with format:String) -> String {
     let dateFormatter = NSDateFormatter()
-    dateFormatter.dateFormat = "HH:mm"
+    dateFormatter.dateFormat = format
     dateFormatter.timeZone = NSTimeZone(name: "Europe/London")
-    let time: String = dateFormatter.stringFromDate(date)
-    return time
+    let string: String = dateFormatter.stringFromDate(date)
+    return string
 }
 
-func sectionHeaderFromDate(date:NSDate) -> String {
-    let dateFormatter = NSDateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-    dateFormatter.timeZone = NSTimeZone(name: "Europe/London")
-    let time: String = dateFormatter.stringFromDate(date)
-    return time
+func timeFromDate(date:NSDate) -> String {
+    return stringFromDate(date, with: "HH:mm")
+}
 
+func ISODateFromDate(date:NSDate) -> String {
+    return stringFromDate(date, with: "yyyy-MM-dd")
+}
+
+func completeDateFromDate(date:NSDate) -> String {
+    return stringFromDate(date, with: "E, dd MMM yyyy HH:mm:ss")
+}
+
+
+func sectionHeaderFromDate(date:NSDate) -> String {
+    return stringFromDate(date, with: "yyyy-MM-dd HH:mm")
 }
 
 
