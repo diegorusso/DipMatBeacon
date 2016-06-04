@@ -86,12 +86,12 @@ class JSONDataExtractor {
                 
                 // starting_time
                 if let dataStartingTime = data["starting_time"] as? String {
-                    startingTime = dateFromString(dataStartingTime)
+                    startingTime = timestampFromString(dataStartingTime)
                 }
                 
                 // end_time
                 if let dataEndTime = data["end_time"] as? String {
-                    endTime = dateFromString(dataEndTime)
+                    endTime = timestampFromString(dataEndTime)
                 }
                 
                 // duration
@@ -141,7 +141,7 @@ class JSONDataExtractor {
                 
                 // last_change
                 if let dataLastChange = data["last_change"] as? String {
-                    lastChange = dateFromString(dataLastChange)
+                    lastChange = timestampFromString(dataLastChange)
                 }
 
                 let currentSchedule = Schedule(id: scheduleId, shortDescription: shortDescription, location: location, startingTime: startingTime, endTime: endTime, duration: duration, longDescription: longDescription, correspondence: correspondence, bookingType: bookingType, createdBy: createdBy, approved: approved, professor: professor, exam: exam, degree: degree, lastChange: lastChange)
