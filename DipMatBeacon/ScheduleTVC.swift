@@ -155,10 +155,16 @@ extension ScheduleTVC: UISearchResultsUpdating{
     }
     
     func filterSearch(searchText: String){
-        filterSearch = schedules.filter { schedules in
-            return schedules.shortDescription.lowercaseString.containsString(searchText.lowercaseString)
+        filterSearch = schedules.filter { schedule in
+            return schedule.shortDescription.lowercaseString.containsString(searchText.lowercaseString) ||
+                schedule.longDescription.lowercaseString.containsString(searchText.lowercaseString) ||
+                schedule.professor.lowercaseString.containsString(searchText.lowercaseString) ||
+                schedule.location.name.lowercaseString.containsString(searchText.lowercaseString) ||
+                schedule.location.building.lowercaseString.containsString(searchText.lowercaseString) ||
+                schedule.createdBy.lowercaseString.containsString(searchText.lowercaseString) ||
+                schedule.correspondence.lowercaseString.containsString(searchText.lowercaseString)
         }
-
+        
         if resultSearchController.active {
             updateSections(filterSearch)
         } else {
