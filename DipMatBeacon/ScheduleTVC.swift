@@ -30,6 +30,7 @@ class ScheduleTVC: UITableViewController {
         loadingLabel = UILabel(frame: CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height))
         
         loadingLabel.text = "Caricamento dati..."
+        loadingLabel.backgroundColor = LIGHTGREY
         loadingLabel.textColor = DARKGREY
         loadingLabel.numberOfLines = 0
         loadingLabel.textAlignment = NSTextAlignment.Center
@@ -175,10 +176,7 @@ extension ScheduleTVC: UISearchResultsUpdating{
     
     func setRefreshTimestamp(){
         // Let's show when the API were run
-        let formatter = NSDateFormatter()
-        formatter.dateFormat = "E, dd MMM yyyy HH:mm:ss"
-        let refreshDate = formatter.stringFromDate(NSDate())
-        
+        let refreshDate = completeDateFromDate(NSDate())
         refreshControl?.attributedTitle = NSAttributedString(string: "\(refreshDate)")
     }
     
