@@ -430,6 +430,15 @@
                             <constraint firstAttribute="trailing" secondItem="S6c-T0-CSD" secondAttribute="trailing" constant="5" id="yGm-jN-GD6"/>
                         </constraints>
                     </view>
+                    <toolbarItems>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="GRd-HS-UYK"/>
+                        <barButtonItem systemItem="action" id="ZbR-Kq-qZ0">
+                            <color key="tintColor" red="0.90588235289999997" green="0.92156862750000001" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                            <connections>
+                                <action selector="shareSchedule:" destination="Tlf-7E-Ht4" id="JNL-K5-5bU"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
                     <connections>
                         <outlet property="approved" destination="BGZ-Mv-LKr" id="KiF-86-Pcx"/>
                         <outlet property="bookingType" destination="des-im-Hhp" id="ilx-eQ-GGc"/>
@@ -459,10 +468,12 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="xcc-6f-U3t">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.29803921570000003" green="0.40000000000000002" blue="0.47843137250000001" alpha="1" colorSpace="calibratedRGB"/>
                     </navigationBar>
                     <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="FJy-7y-6sg">
                         <rect key="frame" x="0.0" y="556" width="600" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.29803921570000003" green="0.40000000000000002" blue="0.47843137250000001" alpha="1" colorSpace="calibratedRGB"/>
                     </toolbar>
                     <connections>
                         <segue destination="Xcr-xK-7qo" kind="relationship" relationship="rootViewController" id="7Fh-9P-zfh"/>
