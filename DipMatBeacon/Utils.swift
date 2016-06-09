@@ -76,9 +76,7 @@ func deregisterObserver(observerName: String, instance: AnyObject){
 
 
 public extension SequenceType {
-    
     /// Categorises elements of self into a dictionary, with the keys given by keyFunc
-    
     func categorise<U : Hashable>(@noescape keyFunc: Generator.Element -> U) -> [U:[Generator.Element]] {
         var dict: [U:[Generator.Element]] = [:]
         for el in self {
@@ -87,4 +85,25 @@ public extension SequenceType {
         }
         return dict
     }
+}
+
+
+func ==(lhs: NSDate, rhs: NSDate) -> Bool
+{
+    return lhs === rhs || lhs.compare(rhs) == .OrderedSame
+}
+
+func <(lhs: NSDate, rhs: NSDate) -> Bool
+{
+    return lhs.compare(rhs) == .OrderedAscending
+}
+
+func >(lhs: NSDate, rhs: NSDate) -> Bool
+{
+    return lhs.compare(rhs) == .OrderedDescending
+}
+
+// That's for Location Model
+func ==(lhs: Location, rhs: Location) -> Bool {
+    return lhs.id == rhs.id
 }
