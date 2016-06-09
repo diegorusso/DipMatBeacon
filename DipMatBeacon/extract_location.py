@@ -12,7 +12,7 @@ sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 
 def extract_location(reportfd, locationfd):
     reader = csv.DictReader(reportfd)
-    writer = csv.DictWriter(locationfd, fieldnames=['name', 'floor', 'building', 'minor', 'mayor' ])
+    writer = csv.DictWriter(locationfd, fieldnames=['name', 'floor', 'building', 'minor', 'major' ])
     locations = set()
     for row in reader:
         locations.add(row['Sala'])
