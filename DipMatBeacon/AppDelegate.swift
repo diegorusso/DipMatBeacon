@@ -10,22 +10,22 @@ import UIKit
 
 var reachability: Reachability?
 var reachabilityStatus = " "
+let UUIDBeaconApp = "A7DBE84C-62A6-40ED-944B-A32C76C44DB2"
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
+    // They survive for the entire lifetime of the application
     var window: UIWindow?
-    
     var internetCheck: Reachability?
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
         registerObserver(kReachabilityChangedNotification, instance: self, with: #selector(AppDelegate.reachabilityChanged(_:)))
-        
         setCache()
-        
         checkInternet()
+        setupNotifications(application)
         
         return true
     }
@@ -51,14 +51,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-        
         deregisterObserver(kReachabilityChangedNotification, instance: self)
     }
     
     
 }
 
-extension AppDelegate{
+extension AppDelegate {
     
     func setCache(){
         let URLCache = NSURLCache(memoryCapacity: 4 * 1024 * 1024, diskCapacity: 20 * 1024 * 1024, diskPath: nil)
@@ -97,8 +96,13 @@ extension AppDelegate{
         
         // I post a notification which will be listen by an listener
         NSNotificationCenter.defaultCenter().postNotificationName("ReachStatusChanged", object: nil)
-        
     }
     
+    func setupNotifications(application: UIApplication){
+        if(application.respondsToSelector(#selector(UIApplication.registerUserNotificationSettings(_:)))) {
+            application.registerUserNotificationSettings(
+                UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
+            )
+        }
+    }
 }
-
