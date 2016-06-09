@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import CoreLocation
 
 class ScheduleTVC: UITableViewController {
     
     // Gobal Variables - cannot be in the extension
     var schedules = [Schedule]()
+    var locations = [Location]()
     
     var sectionSchedules = [String: [Schedule]]()
     var sortedSections = [String]()
@@ -22,7 +24,12 @@ class ScheduleTVC: UITableViewController {
     
     var loadingLabel = UILabel()
     
+    var lastProximity: CLProximity?
+    var locationManager = CLLocationManager()
+    var nearSchedule: Schedule?
+    
     @IBOutlet weak var nowButton: UIBarButtonItem!
+    @IBOutlet weak var nearScheduleButton: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,11 +46,16 @@ class ScheduleTVC: UITableViewController {
         self.tableView.backgroundView = loadingLabel
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         
+        disableNavigationButton()
+        
         // Do any additional setup after loading the view, typically from a nib.
         registerObserver("ReachStatusChanged", instance: self, with: #selector(ScheduleTVC.reachabilityStatusChanged))
         
         // Just call it the first time
         reachabilityStatusChanged()
+        
+        // Setup Beacon
+        setupBeacon()
     }
     
     @IBAction func refresh(sender: UIRefreshControl) {
@@ -59,9 +71,10 @@ class ScheduleTVC: UITableViewController {
 
 extension ScheduleTVC: UISearchResultsUpdating{
     
-    func didLoadData(schedules: [Schedule]) {
+    func didLoadData(schedules: [Schedule], locations: [Location]) {
         
         self.schedules = schedules
+        self.locations = locations
         
         updateSections(self.schedules)
         
@@ -103,23 +116,20 @@ extension ScheduleTVC: UISearchResultsUpdating{
         
         // Call API
         let api = APIManager()
-        let urlApi = "https://ibeacon.stamplayapp.com/api/cobject/v1/schedule?per_page=all&populate=true&sort=start"
-        api.loadData(urlApi, completion: didLoadData)
+        let urlSchedulesApi = "https://ibeacon.stamplayapp.com/api/cobject/v1/schedule?per_page=all&populate=true&sort=start"
+        api.loadData(urlSchedulesApi, completion: didLoadData)
     }
     
     // method to execute every time the ReachStatusChanged notification is received
     func reachabilityStatusChanged(){
         switch reachabilityStatus {
         case NOACCESS:
-            //view.backgroundColor = UIColor.redColor()
             // Move back to the main queue
             dispatch_async(dispatch_get_main_queue()){
                 let alert = UIAlertController(title: "No Internet Access", message: "Please make sure you are connected to the Internet", preferredStyle: .Alert)
                 
                 let okAction = UIAlertAction(title: "OK", style: .Default){
                     action -> Void in
-                    print("OK")
-                    
                     // do something if you want
                 }
                 
@@ -129,10 +139,7 @@ extension ScheduleTVC: UISearchResultsUpdating{
             }
             
         default:
-            //view.backgroundColor = UIColor.greenColor()
-            if schedules.count > 0 {
-                print("Do not refresh API")
-            } else {
+            if schedules.count == 0 {
                 runAPI()
             }
         }
@@ -264,7 +271,139 @@ extension ScheduleTVC {
                 dvc.schedule = schedule
             }
         }
+        if segue.identifier == "nearScheduleDetail"{
+            let dvc = segue.destinationViewController as! ScheduleDetailsVC
+            dvc.schedule = self.nearSchedule
+        }
     }
     
 }
+
+extension ScheduleTVC: CLLocationManagerDelegate {
+    
+    func setupBeacon(){
+        let uuidString = UUIDBeaconApp
+        let beaconIdentifier = "jalee"
+        let beaconUUID:NSUUID = NSUUID(UUIDString: uuidString)!
+        let beaconRegion:CLBeaconRegion = CLBeaconRegion(proximityUUID: beaconUUID, identifier: beaconIdentifier)
+        
+        if(locationManager.respondsToSelector(#selector(CLLocationManager.requestAlwaysAuthorization))) {
+            locationManager.requestAlwaysAuthorization()
+        }
+        
+        locationManager.delegate = self
+        locationManager.pausesLocationUpdatesAutomatically = false
+        
+        locationManager.startMonitoringForRegion(beaconRegion)
+        locationManager.startRangingBeaconsInRegion(beaconRegion)
+        locationManager.startUpdatingLocation()
+    }
+    
+    func sendLocalNotificationWithMessage(message: String!, playSound: Bool) {
+        let notification:UILocalNotification = UILocalNotification()
+        notification.alertBody = message
+        
+        if(playSound) {
+            notification.soundName = UILocalNotificationDefaultSoundName
+        }
+        
+        UIApplication.sharedApplication().scheduleLocalNotification(notification)
+    }
+    
+    func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
+        if(beacons.count > 0) {
+            let nearestBeacon:CLBeacon = beacons[0]
+            if(nearestBeacon.proximity == lastProximity || nearestBeacon.proximity == CLProximity.Unknown) {
+                return;
+            }
+            
+            lastProximity = nearestBeacon.proximity;
+            
+            switch nearestBeacon.proximity {
+            case CLProximity.Far:
+                print("far")
+                disableNavigationButton()
+            case CLProximity.Near:
+                print("near")
+                disableNavigationButton()
+            case CLProximity.Immediate:
+                print("immediate")
+                searchLocation(nearestBeacon)
+            case CLProximity.Unknown:
+                return
+            }
+        } else {
+            if(lastProximity == CLProximity.Unknown) {
+                return;
+            }
+            lastProximity = CLProximity.Unknown
+        }
+    }
+    
+    func searchLocation(nearestBeacon: CLBeacon) {
+        let locationMinor = nearestBeacon.minor
+        let locationMajor = nearestBeacon.major
+        
+        let now = NSDate()
+        
+        let nearestLocations = self.locations.filter{$0.minor == locationMinor && $0.major == locationMajor}
+        
+        guard let nearestLocation = nearestLocations.first else {return}
+        let schedulesLocation = self.schedules.filter{$0.location == nearestLocation && now > $0.startingTime && now < $0.endTime}
+        guard let schedule = schedulesLocation.first else {return}
+        
+        switch UIApplication.sharedApplication().applicationState {
+        case .Active:
+            //The app is running in the foreground and is receiving events. This is the normal mode for foreground apps.
+            enableNavigationButton(schedule)
+        case .Inactive:
+            // The app is running in the foreground but is currently not receiving events. (It may be executing other code though.) An app usually stays in this state only briefly as it transitions to a different state.
+            sendLocalNotification(schedule, nearestLocation: nearestLocation)
+        case .Background:
+            // The app is in the background and executing code
+            sendLocalNotification(schedule, nearestLocation: nearestLocation)
+        }
+    }
+    
+    
+    @IBAction func showNearScheduleDetail(sender: UIBarButtonItem) {
+        performSegueWithIdentifier("nearScheduleDetail", sender: sender)
+    }
+    
+    func enableNavigationButton(schedule: Schedule){
+        nearScheduleButton.title = schedule.location.name
+        nearScheduleButton.enabled = true
+        self.nearSchedule = schedule
+    }
+    
+    func disableNavigationButton(){
+        nearScheduleButton.title = ""
+        nearScheduleButton.enabled = false
+        self.nearSchedule = nil
+    }
+    
+    func sendLocalNotification(schedule: Schedule, nearestLocation: Location){
+        var notificationMessage = ""
+        if schedule.exam == true {
+            notificationMessage = "Esame di \"\(schedule.shortDescription)\" in corso in \"\(nearestLocation.name)\""
+        } else {
+            notificationMessage = "Lezione di \"\(schedule.shortDescription)\" in corso in \"\(nearestLocation.name)\""
+        }
+        
+        sendLocalNotificationWithMessage(notificationMessage, playSound: true)
+    }
+    
+    func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        manager.startRangingBeaconsInRegion(region as! CLBeaconRegion)
+        manager.startUpdatingLocation()
+    }
+    
+    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
+        manager.stopRangingBeaconsInRegion(region as! CLBeaconRegion)
+        manager.stopUpdatingLocation()
+        disableNavigationButton()
+    }
+}
+
+
 
