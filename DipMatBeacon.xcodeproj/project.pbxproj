@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D344D1181D0478C400F9086B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D344D1171D0478C400F9086B /* CoreLocation.framework */; };
 		D36691D31CFAD4CA00F8E4CC /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = D36691D21CFAD4CA00F8E4CC /* Reachability.m */; };
 		D36691D51CFAD50000F8E4CC /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36691D41CFAD50000F8E4CC /* Constants.swift */; };
 		D36691D71CFAD74C00F8E4CC /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36691D61CFAD74C00F8E4CC /* Utils.swift */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D344D1171D0478C400F9086B /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		D36691D01CFAD4CA00F8E4CC /* DipMatBeacon-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DipMatBeacon-Bridging-Header.h"; sourceTree = "<group>"; };
 		D36691D11CFAD4CA00F8E4CC /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		D36691D21CFAD4CA00F8E4CC /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D344D1181D0478C400F9086B /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,6 +83,7 @@
 		D382B8FB1CF9E84700D5C0A8 = {
 			isa = PBXGroup;
 			children = (
+				D344D1171D0478C400F9086B /* CoreLocation.framework */,
 				D382B9061CF9E84700D5C0A8 /* DipMatBeacon */,
 				D382B9051CF9E84700D5C0A8 /* Products */,
 			);
@@ -199,6 +203,11 @@
 					D382B9031CF9E84700D5C0A8 = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = 3QACG89R9Q;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};

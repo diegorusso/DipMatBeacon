@@ -102,6 +102,13 @@
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="B3s-Rh-crD"/>
+                        <barButtonItem enabled="NO" title="nearSchedule" id="5Xb-0I-uXG">
+                            <color key="tintColor" red="0.90588235289999997" green="0.92156862750000001" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                            <connections>
+                                <action selector="showNearScheduleDetail:" destination="Xcr-xK-7qo" id="RSd-vb-Op6"/>
+                                <segue destination="Tlf-7E-Ht4" kind="show" identifier="nearScheduleDetail" id="jw8-xW-nHg"/>
+                            </connections>
+                        </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" id="13B-T3-y5H"/>
                     <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="ZVt-A5-FDY">
@@ -111,6 +118,7 @@
                         </connections>
                     </refreshControl>
                     <connections>
+                        <outlet property="nearScheduleButton" destination="5Xb-0I-uXG" id="2e2-39-Bf4"/>
                         <outlet property="nowButton" destination="meM-v9-XJT" id="86x-60-3zx"/>
                     </connections>
                 </tableViewController>
@@ -664,4 +672,7 @@
             <point key="canvasLocation" x="126" y="405"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="jw8-xW-nHg"/>
+    </inferredMetricsTieBreakers>
 </document>
