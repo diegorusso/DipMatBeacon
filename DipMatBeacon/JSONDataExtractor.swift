@@ -10,11 +10,11 @@ import Foundation
 
 class JSONDataExtractor {
     
-    static func extractLocationDataFromJSon(locationDataObject: AnyObject) -> Location {
+    static private func extractLocationDataFromJson(locationDataObject: AnyObject) -> Location {
         
         // Initialise variables
-        var id = "", name = "", building = "", floor = "", minor = 0, mayor = 0
-        let _emptyLocation = Location(id: id, name: name, building: building, floor: floor, minor: minor, mayor: mayor)
+        var id = "", name = "", building = "", floor = "", minor = 0, major = 0
+        let _emptyLocation = Location(id: id, name: name, building: building, floor: floor, minor: minor, major: major)
         
         guard let data = locationDataObject as? JSONDictionary else { return _emptyLocation}
         
@@ -43,27 +43,28 @@ class JSONDataExtractor {
             minor = locationMinor
         }
         
-        // mayor
-        if let locationMayor = data["mayor"] as? Int {
-            mayor = locationMayor
+        // major
+        if let locationMajor = data["major"] as? Int {
+            major = locationMajor
         }
         
-        let currentLocation =  Location(id: id, name: name, building: building, floor: floor, minor: minor, mayor: mayor)
+        let currentLocation =  Location(id: id, name: name, building: building, floor: floor, minor: minor, major: major)
         return currentLocation
     }
     
-    static func extractScheduleDataFromJson(scheduleDataObject: AnyObject) -> [Schedule] {
+    static func extractDataFromJson(scheduleDataObject: AnyObject) -> ([Schedule], [Location]) {
         
         // guard is like an assert: in this case we check if scheduleDataObject is a JSONDictionary. If so, we continue otherwise we return an empty array. scheduleData will be available in the entire function
-        guard let scheduleData = scheduleDataObject as? JSONDictionary else { return [Schedule]()}
+        guard let scheduleData = scheduleDataObject as? JSONDictionary else { return ([Schedule](), [Location]())}
         
         var schedules = [Schedule]()
+        var locations = Set<Location>()
         
         if let entries = scheduleData["data"] as? JSONArray {
             for data in entries {
                 
                 // Initialise variables
-                let _emptyLocation = Location(id: "", name: "", building: "", floor: "", minor: 0, mayor: 0)
+                let _emptyLocation = Location(id: "", name: "", building: "", floor: "", minor: 0, major: 0)
                 
                 var scheduleId = "", shortDescription = "", location = _emptyLocation, startingTime = NSDate(), endTime = NSDate(), duration = "", longDescription = "",
                 correspondence = "", bookingType = "", createdBy = "", approved = false, professor = "", exam = false, degree = "", lastChange = NSDate()
@@ -81,7 +82,8 @@ class JSONDataExtractor {
                 // location
                 if let dataLocationArray = data["location"] as? JSONArray,
                     let dataLocation = dataLocationArray[0] as? JSONDictionary{
-                    location = JSONDataExtractor.extractLocationDataFromJSon(dataLocation)
+                    location = JSONDataExtractor.extractLocationDataFromJson(dataLocation)
+                    locations.insert(location)
                 }
                 
                 // starting_time
@@ -149,7 +151,9 @@ class JSONDataExtractor {
                 schedules.append(currentSchedule)
             }
         }
-        return schedules
+        
+        // locations is a Set(), hence need to be converted in Array
+        return (schedules, Array(locations))
     }
 }
 

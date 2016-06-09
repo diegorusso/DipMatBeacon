@@ -10,7 +10,7 @@ import Foundation
 
 class APIManager{
     
-    func loadData(urlString: String, completion: [Schedule]-> Void){
+    func loadData(urlString: String, completion: ([Schedule], [Location])-> Void){
         
         // An ephemeral session has no persistent disk storage for cookies,
         // cache or credentials.
@@ -30,12 +30,12 @@ class APIManager{
                 print(error!.localizedDescription)
             } else { // OK, everything looks good
                 
-                let schedules = self.parseJson(data)
+                let (schedules, locations) = self.parseJson(data)
                 
                 let priority = DISPATCH_QUEUE_PRIORITY_HIGH //highest priority possible
                 dispatch_async(dispatch_get_global_queue(priority, 0)){
                     dispatch_async(dispatch_get_main_queue()) {
-                        completion(schedules)
+                        completion(schedules, locations)
                     }
                 }
             }
@@ -43,10 +43,9 @@ class APIManager{
         
         // It executes the background process
         task.resume()
-        
     }
     
-    func parseJson(data: NSData?) -> [Schedule] {
+    func parseJson(data: NSData?) -> ([Schedule], [Location]) {
         // JSONSerialization
         do {
             /* .AllowFragments - top level object is not Array or Dictionary
@@ -54,11 +53,11 @@ class APIManager{
              NSJSONSerialization requires the Do / Try /Catch
              Converts the NSDATA into an AnyObject and pass it to extracScheduleDataFromJson */
             if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments) as AnyObject?{
-                return JSONDataExtractor.extractScheduleDataFromJson(json)
+                return JSONDataExtractor.extractDataFromJson(json)
             }
         } catch {
             print("Failed to parse data: \(error)")
         }
-        return [Schedule]()
+        return ([Schedule](), [Location]())
     }
 }
