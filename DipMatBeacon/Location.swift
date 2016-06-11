@@ -10,8 +10,9 @@ import Foundation
 
 
 class Location: Hashable, Equatable {
+    // Location Model
     
-    // Data Encapsulation - can be set within the class
+    // Data Encapsulation - can be set only within the class
     private(set) var id:String
     private(set) var name:String
     private(set) var building:String
@@ -20,6 +21,7 @@ class Location: Hashable, Equatable {
     private(set) var minor:Int
     
     init(id:String, name:String, building:String, floor:String, minor:Int, major:Int){
+        // This is the constructor
         
         self.id = id
         self.name = name
@@ -31,6 +33,7 @@ class Location: Hashable, Equatable {
     }
     
     var hashValue: Int {
+        // Protocol Equatable requires property 'hashValue' with type 'Int'
         get {
             return self.id.hashValue
         }

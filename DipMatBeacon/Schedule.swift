@@ -10,8 +10,9 @@ import Foundation
 
 
 class Schedule {
+    // Schedule Model
     
-    // Data Encapsulation - can be set within the class
+    // Data Encapsulation - can be set only within the class
     private(set) var id:String
     private(set) var shortDescription:String
     private(set) var location:Location
@@ -32,7 +33,8 @@ class Schedule {
     init(id:String, shortDescription:String, location:Location, startingTime:NSDate,
          endTime:NSDate, duration:String, longDescription:String, correspondence:String,
          bookingType:String, createdBy:String, approved:Bool, professor:String, exam:Bool,
-         degree:String, lastChange:NSDate){
+         degree:String, lastChange:NSDate) {
+        // This is the constructor
         
         self.id = id
         self.shortDescription = shortDescription
@@ -50,6 +52,4 @@ class Schedule {
         self.degree = degree
         self.lastChange = lastChange
     }
-    
-    
 }
