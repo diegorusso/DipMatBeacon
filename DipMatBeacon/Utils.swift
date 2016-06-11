@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 
+// The function converts a string to a NSDate object
 func timestampFromString(dateString:String) -> NSDate {
     let dateFormatter = NSDateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -19,8 +20,7 @@ func timestampFromString(dateString:String) -> NSDate {
 }
 
 
-// Functions to extract part of the timestamp
-
+// The function returns a string representing a formatted date
 func stringFromDate(date:NSDate, with format:String) -> String {
     let dateFormatter = NSDateFormatter()
     dateFormatter.dateFormat = format
@@ -29,24 +29,28 @@ func stringFromDate(date:NSDate, with format:String) -> String {
     return string
 }
 
+// This function extracts the time from the date
 func timeFromDate(date:NSDate) -> String {
     return stringFromDate(date, with: "HH:mm")
 }
 
+// This function extracts the ISO date from the date
 func ISODateFromDate(date:NSDate) -> String {
     return stringFromDate(date, with: "yyyy-MM-dd")
 }
 
+// This function extracts the ISO date from the date
 func completeDateFromDate(date:NSDate) -> String {
     return stringFromDate(date, with: "E, dd MMM yyyy HH:mm:ss")
 }
 
-
+// This function extracts the ISO date and time form date
 func sectionHeaderFromDate(date:NSDate) -> String {
     return stringFromDate(date, with: "yyyy-MM-dd HH:mm")
 }
 
 
+// Depending on correspondence value, it returns a different color. These colors match the ones on the website
 func correspondenceColor(correspondence:String) -> UIColor {
     var bgColor: UIColor
     
@@ -63,21 +67,21 @@ func correspondenceColor(correspondence:String) -> UIColor {
 }
 
 
+// Function to register an observer
 func registerObserver(observerName: String, instance: AnyObject, with selector: Selector){
-    // Add observer: when I receive kReachabilityChangedNotification I execute reachabilityChanged
-    // _: after the selector means there is a parameter
     NSNotificationCenter.defaultCenter().addObserver(instance, selector: selector, name: observerName, object: nil)
 }
 
+// Function to deregister an observer
 func deregisterObserver(observerName: String, instance: AnyObject){
-    // Remove the observer added at the top
     NSNotificationCenter.defaultCenter().removeObserver(instance, name: observerName, object: nil)
 }
 
 
+// This an extension of SequenceType objects (eg. array)
 public extension SequenceType {
-    /// Categorises elements of self into a dictionary, with the keys given by keyFunc
-    func categorise<U : Hashable>(@noescape keyFunc: Generator.Element -> U) -> [U:[Generator.Element]] {
+    // Categorises elements of self into a dictionary, with the keys given by keyFunc
+    func categorise<U: Hashable>(@noescape keyFunc: Generator.Element -> U) -> [U:[Generator.Element]] {
         var dict: [U:[Generator.Element]] = [:]
         for el in self {
             let key = keyFunc(el)
@@ -88,22 +92,23 @@ public extension SequenceType {
 }
 
 
-func ==(lhs: NSDate, rhs: NSDate) -> Bool
-{
+// The following three functions are used to compare NSDate objects
+// The two operands are equal
+func ==(lhs: NSDate, rhs: NSDate) -> Bool {
     return lhs === rhs || lhs.compare(rhs) == .OrderedSame
 }
 
-func <(lhs: NSDate, rhs: NSDate) -> Bool
-{
+// The left operand is smaller than the right operand
+func <(lhs: NSDate, rhs: NSDate) -> Bool {
     return lhs.compare(rhs) == .OrderedAscending
 }
 
-func >(lhs: NSDate, rhs: NSDate) -> Bool
-{
+// The left operand is greater than the right operand
+func >(lhs: NSDate, rhs: NSDate) -> Bool {
     return lhs.compare(rhs) == .OrderedDescending
 }
 
-// That's for Location Model
+// The two operands are equal - applied to Location
 func ==(lhs: Location, rhs: Location) -> Bool {
     return lhs.id == rhs.id
 }

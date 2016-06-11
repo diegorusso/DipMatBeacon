@@ -12,9 +12,9 @@ import UIKit
 typealias JSONDictionary = [String: AnyObject]
 typealias JSONArray = Array<AnyObject>
 
-let WIFI = "WIFI Available"
-let NOACCESS = "No Internet Access"
-let WWAN = "Cellular Access Available"
+let WIFI = "WIFI Disponibile"
+let NOACCESS = "Connessione Internet Assente"
+let WWAN = "Connesione Dati Disponibile"
 
 // Colors from https://servizi.dmi.unipg.it/mrbs
 let LIGHTGREEN = UIColor(red: 154/255, green: 203/255, blue: 107/255, alpha: 1)
