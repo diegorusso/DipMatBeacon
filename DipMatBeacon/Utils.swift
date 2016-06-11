@@ -10,8 +10,8 @@ import Foundation
 import UIKit
 
 
-// The function converts a string to a NSDate object
 func timestampFromString(dateString:String) -> NSDate {
+    // The function converts a string to a NSDate object
     let dateFormatter = NSDateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
     dateFormatter.timeZone = NSTimeZone(name: "Europe/London")
@@ -19,9 +19,8 @@ func timestampFromString(dateString:String) -> NSDate {
     return date
 }
 
-
-// The function returns a string representing a formatted date
 func stringFromDate(date:NSDate, with format:String) -> String {
+    // The function returns a string representing a formatted date
     let dateFormatter = NSDateFormatter()
     dateFormatter.dateFormat = format
     dateFormatter.timeZone = NSTimeZone(name: "Europe/London")
@@ -29,31 +28,30 @@ func stringFromDate(date:NSDate, with format:String) -> String {
     return string
 }
 
-// This function extracts the time from the date
 func timeFromDate(date:NSDate) -> String {
+    // This function extracts the time from the date
     return stringFromDate(date, with: "HH:mm")
 }
 
-// This function extracts the ISO date from the date
 func ISODateFromDate(date:NSDate) -> String {
+    // This function extracts the ISO date from the date
     return stringFromDate(date, with: "yyyy-MM-dd")
 }
 
-// This function extracts the ISO date from the date
 func completeDateFromDate(date:NSDate) -> String {
+    // This function extracts the ISO date from the date
     return stringFromDate(date, with: "E, dd MMM yyyy HH:mm:ss")
 }
 
-// This function extracts the ISO date and time form date
 func sectionHeaderFromDate(date:NSDate) -> String {
+    // This function extracts the ISO date and time form date
     return stringFromDate(date, with: "yyyy-MM-dd HH:mm")
 }
 
 
-// Depending on correspondence value, it returns a different color. These colors match the ones on the website
 func correspondenceColor(correspondence:String) -> UIColor {
+    // Depending on correspondence value, it returns a different color. These colors match the ones on the website
     var bgColor: UIColor
-    
     switch correspondence {
     case "CdS interno del Dipartimento":
         bgColor = LIGHTGREEN
@@ -62,26 +60,26 @@ func correspondenceColor(correspondence:String) -> UIColor {
     default:
         bgColor = LIGHTGREY
     }
-    
     return bgColor
 }
 
 
-// Function to register an observer
 func registerObserver(observerName: String, instance: AnyObject, with selector: Selector){
+    // Function to register an observer
     NSNotificationCenter.defaultCenter().addObserver(instance, selector: selector, name: observerName, object: nil)
 }
 
-// Function to deregister an observer
 func deregisterObserver(observerName: String, instance: AnyObject){
+    // Function to deregister an observer
     NSNotificationCenter.defaultCenter().removeObserver(instance, name: observerName, object: nil)
 }
 
 
-// This an extension of SequenceType objects (eg. array)
 public extension SequenceType {
-    // Categorises elements of self into a dictionary, with the keys given by keyFunc
+    // This an extension of SequenceType objects (eg. array)
+    
     func categorise<U: Hashable>(@noescape keyFunc: Generator.Element -> U) -> [U:[Generator.Element]] {
+        // Categorises elements of self into a dictionary, with the keys given by keyFunc
         var dict: [U:[Generator.Element]] = [:]
         for el in self {
             let key = keyFunc(el)
@@ -93,22 +91,23 @@ public extension SequenceType {
 
 
 // The following three functions are used to compare NSDate objects
-// The two operands are equal
 func ==(lhs: NSDate, rhs: NSDate) -> Bool {
+    // The two operands are equal
     return lhs === rhs || lhs.compare(rhs) == .OrderedSame
 }
 
-// The left operand is smaller than the right operand
 func <(lhs: NSDate, rhs: NSDate) -> Bool {
+    // The left operand is smaller than the right operand
     return lhs.compare(rhs) == .OrderedAscending
 }
 
-// The left operand is greater than the right operand
 func >(lhs: NSDate, rhs: NSDate) -> Bool {
+    // The left operand is greater than the right operand
     return lhs.compare(rhs) == .OrderedDescending
 }
 
-// The two operands are equal - applied to Location
+// The following function si used to compare Location objects
 func ==(lhs: Location, rhs: Location) -> Bool {
+    // The two operands are equal - applied to Location
     return lhs.id == rhs.id
 }

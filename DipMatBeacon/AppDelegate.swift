@@ -8,23 +8,34 @@
 
 import UIKit
 
+
+// Global variables
 var reachability: Reachability?
 var reachabilityStatus = " "
+
+
+// This is the ID of the beacons: it should be the same on all the beacons used with this app
 let UUIDBeaconApp = "A7DBE84C-62A6-40ED-944B-A32C76C44DB2"
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+
+@UIApplicationMain class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    // They survive for the entire lifetime of the application
     var window: UIWindow?
     var internetCheck: Reachability?
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        // This is the application entry point
         
+        // Register the observer to check whenever the connection changes
         registerObserver(kReachabilityChangedNotification, instance: self, with: #selector(AppDelegate.reachabilityChanged(_:)))
+        
+        // Set the cache for NSUrl request
         setCache()
+        
+        // I need to run this because the first time I don't have a notification to tell me if I have internet or not.
         checkInternet()
+        
+        // Register local notifications
         setupNotifications(application)
         
         return true
@@ -51,6 +62,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        
+        // To free up memory I need to deregister every observer I registered
         deregisterObserver(kReachabilityChangedNotification, instance: self)
     }
     
@@ -58,28 +71,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 extension AppDelegate {
+    // This extensions contains all custom methods used by the AppDelegate
     
     func setCache(){
+        // Set the cache for NSURL
         let URLCache = NSURLCache(memoryCapacity: 4 * 1024 * 1024, diskCapacity: 20 * 1024 * 1024, diskPath: nil)
         NSURLCache.setSharedURLCache(URLCache)
     }
     
     func checkInternet(){
-        // I need to run this because the first time I don't have a notification to tell me if I have internet or not.
+        // Checks whether the default route is available
         internetCheck = Reachability.reachabilityForInternetConnection()
+        // Start listening for reachability notifications
         internetCheck?.startNotifier()
         statusChangedWithReachability(internetCheck!)
     }
     
     func reachabilityChanged(notification: NSNotification){
-        // as? is casting to Reachability
+        // This method is executed by the observer
         reachability = notification.object as? Reachability
         statusChangedWithReachability(reachability!)
     }
     
     func statusChangedWithReachability(currentReachabilityStatus: Reachability){
+        // The method gets the reachability status and it sets reachabilityStatus variable
         let networkStatus: NetworkStatus = currentReachabilityStatus.currentReachabilityStatus()
         
+        // It sets reachabilityStatus to the correct value (this will be read by ScheduleTVC.swift)
         switch networkStatus.rawValue{
         case NotReachable.rawValue:
             NSLog(NOACCESS)
@@ -94,11 +112,12 @@ extension AppDelegate {
             return
         }
         
-        // I post a notification which will be listen by an listener
+        // Creates a notification with a given name and sender and posts it to the receiver (in ScheduleTVC.swift)
         NSNotificationCenter.defaultCenter().postNotificationName("ReachStatusChanged", object: nil)
     }
     
     func setupNotifications(application: UIApplication){
+        // It requests permission from the user to post local notifications
         if(application.respondsToSelector(#selector(UIApplication.registerUserNotificationSettings(_:)))) {
             application.registerUserNotificationSettings(
                 UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
