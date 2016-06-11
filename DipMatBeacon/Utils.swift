@@ -12,7 +12,7 @@ import UIKit
 
 func timestampFromString(dateString:String) -> NSDate {
     let dateFormatter = NSDateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'.000Z'"
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
     dateFormatter.timeZone = NSTimeZone(name: "Europe/London")
     let date: NSDate = dateFormatter.dateFromString(dateString)!
     return date

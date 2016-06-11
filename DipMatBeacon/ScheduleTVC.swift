@@ -310,36 +310,6 @@ extension ScheduleTVC: CLLocationManagerDelegate {
         UIApplication.sharedApplication().scheduleLocalNotification(notification)
     }
     
-    func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
-        if(beacons.count > 0) {
-            let nearestBeacon:CLBeacon = beacons[0]
-            if(nearestBeacon.proximity == lastProximity || nearestBeacon.proximity == CLProximity.Unknown) {
-                return;
-            }
-            
-            lastProximity = nearestBeacon.proximity;
-            
-            switch nearestBeacon.proximity {
-            case CLProximity.Far:
-                print("far")
-                disableNavigationButton()
-            case CLProximity.Near:
-                print("near")
-                disableNavigationButton()
-            case CLProximity.Immediate:
-                print("immediate")
-                searchLocation(nearestBeacon)
-            case CLProximity.Unknown:
-                return
-            }
-        } else {
-            if(lastProximity == CLProximity.Unknown) {
-                return;
-            }
-            lastProximity = CLProximity.Unknown
-        }
-    }
-    
     func searchLocation(nearestBeacon: CLBeacon) {
         let locationMinor = nearestBeacon.minor
         let locationMajor = nearestBeacon.major
@@ -393,15 +363,48 @@ extension ScheduleTVC: CLLocationManagerDelegate {
         sendLocalNotificationWithMessage(notificationMessage, playSound: true)
     }
     
+    
+    func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
+        if(beacons.count > 0) {
+            let nearestBeacon:CLBeacon = beacons[0]
+            if(nearestBeacon.proximity == lastProximity || nearestBeacon.proximity == CLProximity.Unknown) {
+                return;
+            }
+            
+            lastProximity = nearestBeacon.proximity;
+            
+            switch nearestBeacon.proximity {
+            case CLProximity.Far:
+                NSLog("far")
+                disableNavigationButton()
+            case CLProximity.Near:
+                NSLog("near")
+                disableNavigationButton()
+            case CLProximity.Immediate:
+                NSLog("immediate")
+                searchLocation(nearestBeacon)
+            case CLProximity.Unknown:
+                return
+            }
+        } else {
+            if(lastProximity == CLProximity.Unknown) {
+                return;
+            }
+            lastProximity = CLProximity.Unknown
+        }
+    }
+    
     func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
         manager.startRangingBeaconsInRegion(region as! CLBeaconRegion)
         manager.startUpdatingLocation()
+        NSLog("enter")
     }
     
     func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
         manager.stopRangingBeaconsInRegion(region as! CLBeaconRegion)
         manager.stopUpdatingLocation()
         disableNavigationButton()
+        NSLog("exit")
     }
 }
 

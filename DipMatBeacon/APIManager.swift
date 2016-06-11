@@ -14,8 +14,8 @@ class APIManager{
         
         // An ephemeral session has no persistent disk storage for cookies,
         // cache or credentials.
-        //let config = NSURLSessionConfiguration.defaultSessionConfiguration()
-        //let session = NSURLSession(configuration: config)
+        // let config = NSURLSessionConfiguration.ephemeralSessionConfiguration()
+        // let session = NSURLSession(configuration: config)
         
         // Singleton disegn pattern
         let session = NSURLSession.sharedSession()
@@ -27,7 +27,7 @@ class APIManager{
             (data, response, error) -> Void in
             
             if error != nil { // oops, there is an error
-                print(error!.localizedDescription)
+                NSLog(error!.localizedDescription)
             } else { // OK, everything looks good
                 
                 let (schedules, locations) = self.parseJson(data)
@@ -56,7 +56,7 @@ class APIManager{
                 return JSONDataExtractor.extractDataFromJson(json)
             }
         } catch {
-            print("Failed to parse data: \(error)")
+            NSLog("Failed to parse data: \(error)")
         }
         return ([Schedule](), [Location]())
     }

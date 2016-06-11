@@ -110,9 +110,10 @@ extension ScheduleDetailsVC {
             (activity, success, items, error) in
             
             if activity == UIActivityTypeMail {
-                print("Email selected")
+                NSLog("Email selected")
             }
         }
+        
         self.presentViewController(activityViewController, animated: true, completion: nil)
     }
 

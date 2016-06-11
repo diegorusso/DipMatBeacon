@@ -82,13 +82,13 @@ extension AppDelegate {
         
         switch networkStatus.rawValue{
         case NotReachable.rawValue:
-            print(NOACCESS)
+            NSLog(NOACCESS)
             reachabilityStatus = NOACCESS
         case ReachableViaWiFi.rawValue:
-            print(WIFI)
+            NSLog(WIFI)
             reachabilityStatus = WIFI
         case ReachableViaWWAN.rawValue:
-            print(WWAN)
+            NSLog(WWAN)
             reachabilityStatus = WWAN
         default:
             return
