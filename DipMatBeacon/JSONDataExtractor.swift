@@ -11,11 +11,16 @@ import Foundation
 class JSONDataExtractor {
     
     static private func extractLocationDataFromJson(locationDataObject: AnyObject) -> Location {
+        // Private method to create Location instance with data passed as argument
         
         // Initialise variables
         var id = "", name = "", building = "", floor = "", minor = 0, major = 0
+        
+        // That's an empty Location
         let _emptyLocation = Location(id: id, name: name, building: building, floor: floor, minor: minor, major: major)
         
+        // guard is like an assert: in this case we check if locationDataObject is a JSONDictionary
+        // If so we continue and locationDataObject will be available in the entire function, otherwise we return an empty Location
         guard let data = locationDataObject as? JSONDictionary else { return _emptyLocation}
         
         // id
@@ -48,16 +53,18 @@ class JSONDataExtractor {
             major = locationMajor
         }
         
-        let currentLocation =  Location(id: id, name: name, building: building, floor: floor, minor: minor, major: major)
-        return currentLocation
+        // it returns Location with all the data set
+        return Location(id: id, name: name, building: building, floor: floor, minor: minor, major: major)
     }
     
     static func extractDataFromJson(scheduleDataObject: AnyObject) -> ([Schedule], [Location]) {
         
-        // guard is like an assert: in this case we check if scheduleDataObject is a JSONDictionary. If so, we continue otherwise we return an empty array. scheduleData will be available in the entire function
+        // guard is like an assert: in this case we check if scheduleDataObject is a JSONDictionary
+        // If so we continue and scheduleData will be available in the entire function, otherwise we return an empty tuple
         guard let scheduleData = scheduleDataObject as? JSONDictionary else { return ([Schedule](), [Location]())}
         
         var schedules = [Schedule]()
+        // There will be a lot of duplicates, so I create a Set
         var locations = Set<Location>()
         
         if let entries = scheduleData["data"] as? JSONArray {
@@ -66,8 +73,9 @@ class JSONDataExtractor {
                 // Initialise variables
                 let _emptyLocation = Location(id: "", name: "", building: "", floor: "", minor: 0, major: 0)
                 
-                var scheduleId = "", shortDescription = "", location = _emptyLocation, startingTime = NSDate(), endTime = NSDate(), duration = "", longDescription = "",
-                correspondence = "", bookingType = "", createdBy = "", approved = false, professor = "", exam = false, degree = "", lastChange = NSDate()
+                var scheduleId = "", shortDescription = "", location = _emptyLocation, startingTime = NSDate(), endTime = NSDate(),
+                    duration = "", longDescription = "", correspondence = "", bookingType = "", createdBy = "", approved = false,
+                    professor = "", exam = false, degree = "", lastChange = NSDate()
                 
                 // id
                 if let dataId = data["id"] as? String {
