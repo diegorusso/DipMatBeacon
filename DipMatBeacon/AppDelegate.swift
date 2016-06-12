@@ -73,8 +73,6 @@ let UUIDBeaconApp = "A7DBE84C-62A6-40ED-944B-A32C76C44DB2"
         // To free up memory I need to deregister every observer I registered
         deregisterObserver(kReachabilityChangedNotification, instance: self)
     }
-    
-    
 }
 
 extension AppDelegate {

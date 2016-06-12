@@ -12,6 +12,7 @@ class APIManager{
     
     func loadData(urlString: String, completion: ([Schedule], [Location])-> Void){
         // The method gets the data from usrlString and builds two lists, one for Schedule and for for Location. It passes then these two lists to completion methods passed as argument
+        NSLog("loadData")
         
         // An ephemeral session has no persistent disk storage for cookies,
         // cache or credentials.

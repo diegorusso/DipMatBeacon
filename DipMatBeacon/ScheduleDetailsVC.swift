@@ -34,6 +34,7 @@ class ScheduleDetailsVC: UIViewController {
 
     override func viewDidLoad() {
         // Called after the controller's view is loaded into memory.
+        NSLog("viewDidLoad")
         super.viewDidLoad()
         // It sets all the labels in the view
         setLabels()
@@ -43,12 +44,14 @@ class ScheduleDetailsVC: UIViewController {
         // This method is called before the view controller's view is about to be added to a view
         // hierarchy and before any animations are configured for showing the view.
         // You can override this method to perform custom tasks associated with displaying the view.
+        NSLog("viewWillAppear")
         super.viewWillAppear(false)
         view.backgroundColor = correspondenceColor(schedule.correspondence)
     }
     
     @IBAction func shareSchedule(sender: UIBarButtonItem) {
         // This is executed whenever the user tap on share button
+        NSLog("shareSchedule")
         touchIDCheck()
     }
 
@@ -101,6 +104,7 @@ extension ScheduleDetailsVC {
     
     func shareScheduleDetails(){
         // I creates the UIActivityViewController filled with the right information
+        NSLog("shareScheduleDetails")
         
         // Those strings will be used to create the UIActivityViewController
         let activity1, activity2, activity3, activity4, activity5, activity6, activity7:String
@@ -141,6 +145,7 @@ extension ScheduleDetailsVC {
     
     func touchIDCheck(){
         // This method is responsible to authenticate the user through TouchID
+        NSLog("touchIDCheck")
         
         // Create the local Authentication Context
         let context = LAContext()

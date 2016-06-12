@@ -37,6 +37,7 @@ class ScheduleTVC: UITableViewController {
     
     override func viewDidLoad() {
         // Called after the controller's view is loaded into memory.
+        NSLog("viewDidLoad")
         super.viewDidLoad()
         // Initial setup
         setup()
@@ -44,6 +45,7 @@ class ScheduleTVC: UITableViewController {
     
     @IBAction func moveToNextSchedule(sender: UIBarButtonItem) {
         // This method is executed whenever the user taps on nextSchedule button
+        NSLog("moveToNextSchedule")
         
         // Find the nearest section
         let now = NSDate()
@@ -65,6 +67,7 @@ class ScheduleTVC: UITableViewController {
     
     @IBAction func refresh(sender: UIRefreshControl) {
         // The method is executed whenever the user pulls down the table and forces the refresh
+        NSLog("refresh")
         
         // It is not allow to refresh while searching
         if resultSearchController.active {
@@ -80,6 +83,7 @@ class ScheduleTVC: UITableViewController {
     
     @IBAction func showNearScheduleDetail(sender: UIBarButtonItem) {
         // This method is executed whenere the user tap on nearSchedule button
+        NSLog("showNearScheduleDetail")
         performSegueWithIdentifier("nearScheduleDetail", sender: sender)
     }
     
@@ -131,6 +135,7 @@ extension ScheduleTVC {
     
     func reachabilityStatusChanged(){
         // method to execute every time the ReachStatusChanged notification is received (registered through the observer)
+        NSLog(reachabilityStatus)
         
         // reachabilityStatus is a global variable set in AppDelegate.swift
         switch reachabilityStatus {
@@ -154,6 +159,8 @@ extension ScheduleTVC {
     
     func runAPI() {
         // The method updates the time when data was downloaded
+        NSLog("runAPI")
+        
         setRefreshTimestamp()
         
         // Instantiate the APIManager
@@ -165,6 +172,7 @@ extension ScheduleTVC {
     
     func didLoadData(schedules: [Schedule], locations: [Location]) {
         // This is the callback of loadData
+        NSLog("didLoadData")
         
         self.schedules = schedules
         self.locations = locations
@@ -205,6 +213,7 @@ extension ScheduleTVC: UISearchResultsUpdating{
     
     func filterSearch(searchText: String){
         // The method implements the actual search: it filters elements from schedules depending on the conditions below
+        NSLog("filterSearch")
         filterSearch = schedules.filter { schedule in
             return schedule.shortDescription.lowercaseString.containsString(searchText.lowercaseString) ||
                 schedule.longDescription.lowercaseString.containsString(searchText.lowercaseString) ||
@@ -259,6 +268,7 @@ extension ScheduleTVC {
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // Asks the data source to return the number of sections in the table view
+        NSLog("Sezioni nella tabella: \(self.sectionSchedules.count)")
         if self.schedules.count > 0 {
             // It counts how many sections I have
             return self.sectionSchedules.count
@@ -283,7 +293,6 @@ extension ScheduleTVC {
         cell.schedule = sectionItems![indexPath.row]
         return cell
     }
-    
     
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         // Tells the delegate the table view is about to draw a cell for a particular row.
@@ -329,6 +338,7 @@ extension ScheduleTVC {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Notifies the view controller that a segue is about to be performed.
         // In a storyboard-based application, you will often want to do a little preparation before navigation
+        NSLog("Segue: \(segue.identifier)")
         
         // This segue is triggered when the user tap on a cell
         if segue.identifier == "scheduleDetail" {
@@ -405,13 +415,13 @@ extension ScheduleTVC: CLLocationManagerDelegate {
             // Depending on the proximity it takes the proper action
             switch nearestBeacon.proximity {
             case CLProximity.Far:
-                NSLog("Lontano")
+                NSLog("Beacon \(nearestBeacon.minor)-\(nearestBeacon.major) è lontano")
                 disableNearScheduleButton()
             case CLProximity.Near:
-                NSLog("Vicino")
+                NSLog("Beacon \(nearestBeacon.minor)-\(nearestBeacon.major) è vicino")
                 disableNearScheduleButton()
             case CLProximity.Immediate:
-                NSLog("Immediato")
+                NSLog("Beacon \(nearestBeacon.minor)-\(nearestBeacon.major) è immediato")
                 searchLocationSchedule(nearestBeacon)
             case CLProximity.Unknown:
                 return
@@ -428,7 +438,7 @@ extension ScheduleTVC: CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
         // Tells the delegate that the user entered the specified region.
-        NSLog("Entrato nella regione")
+        NSLog("Entrato nella regione \(region.identifier)")
         // Starts the delivery of notifications for beacons in the specified region.
         manager.startRangingBeaconsInRegion(region as! CLBeaconRegion)
         // Starts the generation of updates that report the user’s current location.
@@ -437,7 +447,7 @@ extension ScheduleTVC: CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
         // Tells the delegate that the user left the specified region.
-        NSLog("Uscito dalla regione")
+        NSLog("Uscito dalla regione \(region.identifier)")
         // Stops the delivery of notifications for the specified beacon region.
         manager.stopRangingBeaconsInRegion(region as! CLBeaconRegion)
         // Stops the generation of location updates.
@@ -449,6 +459,7 @@ extension ScheduleTVC: CLLocationManagerDelegate {
     func receivedLocalNotification(){
         // This method is executed whenever a nearScheduleDetail notification is posted
         // It is the method registered through the observer
+        NSLog("Notifica locale ricevuta")
         performSegueWithIdentifier("nearScheduleDetail", sender: nil)
     }
     
@@ -477,21 +488,25 @@ extension ScheduleTVC: CLLocationManagerDelegate {
         case .Active:
             //The app is running in the foreground and is receiving events. This is the normal mode for foreground apps.
             // It enables nearSchedukeButton
+            NSLog("App attiva")
             enableNearScheduleButton(schedule)
         case .Inactive:
             // The app is running in the foreground but is currently not receiving events. (It may be executing other code though.)
             //An app usually stays in this state only briefly as it transitions to a different state.
             // Send a local notification
+            NSLog("App inattiva")
             sendLocalNotification(schedule, nearestLocation: nearestLocation)
         case .Background:
             // The app is in the background and executing code
             // Send a local notification
+            NSLog("App in background")
             sendLocalNotification(schedule, nearestLocation: nearestLocation)
         }
     }
     
     func enableNearScheduleButton(schedule: Schedule){
         // The method enable nearScheduleButton
+        NSLog("enableNearScheduleButton")
         self.nearSchedule = schedule
         // Set the title of the button
         nearScheduleButton.title = schedule.location.name
@@ -506,6 +521,7 @@ extension ScheduleTVC: CLLocationManagerDelegate {
     
     func disableNearScheduleButton(){
         // The method disables nearScheduleButton
+        NSLog("disableNearScheduleButton")
         nearScheduleButton.title = ""
         nearScheduleButton.enabled = false
         self.nearSchedule = nil
@@ -513,6 +529,8 @@ extension ScheduleTVC: CLLocationManagerDelegate {
     
     func sendLocalNotification(schedule: Schedule, nearestLocation: Location){
         // This is very important: nearSchedule has now schedule which will be used when the user opens the app from the notification
+        NSLog("sendLocalNotification")
+        
         self.nearSchedule = schedule
         var notificationMessage = ""
         // Notification message depends on the schedule type
@@ -528,6 +546,8 @@ extension ScheduleTVC: CLLocationManagerDelegate {
     
     func sendLocalNotificationWithMessage(message: String!, playSound: Bool) {
         // The method sends a local notification
+        NSLog("sendLocalNotificationWithMessage: \(message)")
+        
         // Create the notification
         let notification:UILocalNotification = UILocalNotification()
         // Set the message
