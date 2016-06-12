@@ -96,7 +96,8 @@
                         </connections>
                     </tableView>
                     <toolbarItems>
-                        <barButtonItem enabled="NO" title="Prossima Lezione" id="meM-v9-XJT">
+                        <barButtonItem enabled="NO" title="nextLecture" id="meM-v9-XJT">
+                            <color key="tintColor" red="0.90588235289999997" green="0.92156862750000001" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <action selector="moveToCurrentSchedule:" destination="Xcr-xK-7qo" id="KZs-We-0P8"/>
                             </connections>
@@ -119,7 +120,7 @@
                     </refreshControl>
                     <connections>
                         <outlet property="nearScheduleButton" destination="5Xb-0I-uXG" id="2e2-39-Bf4"/>
-                        <outlet property="nowButton" destination="meM-v9-XJT" id="86x-60-3zx"/>
+                        <outlet property="nextScheduleButton" destination="meM-v9-XJT" id="6bQ-Yn-DKa"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WLO-Nc-a69" userLabel="First Responder" sceneMemberID="firstResponder"/>

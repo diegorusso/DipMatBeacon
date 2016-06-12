@@ -41,6 +41,13 @@ let UUIDBeaconApp = "A7DBE84C-62A6-40ED-944B-A32C76C44DB2"
         return true
     }
     
+    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+        // This is when the app is launched starting from a notification
+        
+        // I post a notification which tells I received a local notification
+        NSNotificationCenter.defaultCenter().postNotificationName("ReceivedLocalNotification", object: nil)
+    }
+    
     
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

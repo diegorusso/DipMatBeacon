@@ -8,10 +8,11 @@
 
 import UIKit
 import CoreLocation
+import AVFoundation
 
 class ScheduleTVC: UITableViewController {
     
-    // Gobal Variables - cannot be in the extension
+    // Global Variables - cannot be in the extension
     var schedules = [Schedule]()
     var locations = [Location]()
     
@@ -22,127 +23,23 @@ class ScheduleTVC: UITableViewController {
     var filterSearch = [Schedule]()
     let resultSearchController = UISearchController(searchResultsController: nil)
     
+    // Initial label
     var loadingLabel = UILabel()
     
+    // Variables used for beaconing
     var lastProximity: CLProximity?
     var locationManager = CLLocationManager()
     var nearSchedule: Schedule?
     
-    @IBOutlet weak var nowButton: UIBarButtonItem!
+    // Bottom navigation buttons
+    @IBOutlet weak var nextScheduleButton: UIBarButtonItem!
     @IBOutlet weak var nearScheduleButton: UIBarButtonItem!
     
     override func viewDidLoad() {
+        // Called after the controller's view is loaded into memory.
         super.viewDidLoad()
-        
-        loadingLabel = UILabel(frame: CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height))
-        
-        loadingLabel.text = "Caricamento dati..."
-        loadingLabel.backgroundColor = LIGHTGREY
-        loadingLabel.textColor = DARKGREY
-        loadingLabel.numberOfLines = 0
-        loadingLabel.textAlignment = NSTextAlignment.Center
-        loadingLabel.sizeToFit()
-        
-        self.tableView.backgroundView = loadingLabel
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
-        
-        disableNavigationButton()
-        
-        // Do any additional setup after loading the view, typically from a nib.
-        registerObserver("ReachStatusChanged", instance: self, with: #selector(ScheduleTVC.reachabilityStatusChanged))
-        
-        // Just call it the first time
-        reachabilityStatusChanged()
-        
-        // Setup Beacon
-        setupBeacon()
-    }
-    
-    @IBAction func refresh(sender: UIRefreshControl) {
-        refreshControl?.endRefreshing()
-        
-        if resultSearchController.active {
-            refreshControl?.attributedTitle = NSAttributedString(string: "No refresh allowed in search")
-        } else {
-            runAPI()
-        }
-    }
-}
-
-extension ScheduleTVC: UISearchResultsUpdating{
-    
-    func didLoadData(schedules: [Schedule], locations: [Location]) {
-        
-        self.schedules = schedules
-        self.locations = locations
-        
-        updateSections(self.schedules)
-        
-        //NavigationController
-        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: LIGHTGREY]
-        navigationController?.navigationBar.barTintColor = DARKGREY
-        navigationController?.navigationBar.tintColor = LIGHTGREY
-        navigationController?.toolbar.barTintColor = DARKGREY
-        nowButton.enabled = true
-        nowButton.tintColor = LIGHTGREY
-        
-        title = ("DMI - MRBS")
-        
-        // That's the search
-        resultSearchController.searchResultsUpdater = self
-        definesPresentationContext = true
-        // That's very important: if it is true, during search I cannot do anything and when you click on a video you come back to the original view
-        resultSearchController.dimsBackgroundDuringPresentation = false
-        resultSearchController.searchBar.placeholder = "Cerca..."
-        resultSearchController.searchBar.searchBarStyle = UISearchBarStyle.Prominent
-        tableView.tableHeaderView = resultSearchController.searchBar
-        
-        loadingLabel.hidden = true
-        
-        tableView.reloadData()
-        
-    }
-    
-    func updateSections(schedules: [Schedule]){
-        // This is done through an extension of SequenceType (see Utils.swift)
-        self.sectionSchedules = schedules.categorise{sectionHeaderFromDate($0.startingTime)}
-        
-        // Let's have an array of sorted String
-        self.sortedSections = self.sectionSchedules.keys.elements.sort({$0.compare($1) == NSComparisonResult.OrderedAscending })
-    }
-    
-    func runAPI() {
-        setRefreshTimestamp()
-        
-        // Call API
-        let api = APIManager()
-        let urlSchedulesApi = "https://ibeacon.stamplayapp.com/api/cobject/v1/schedule?per_page=all&populate=true&sort=start"
-        api.loadData(urlSchedulesApi, completion: didLoadData)
-    }
-    
-    // method to execute every time the ReachStatusChanged notification is received
-    func reachabilityStatusChanged(){
-        switch reachabilityStatus {
-        case NOACCESS:
-            // Move back to the main queue
-            dispatch_async(dispatch_get_main_queue()){
-                let alert = UIAlertController(title: "No Internet Access", message: "Please make sure you are connected to the Internet", preferredStyle: .Alert)
-                
-                let okAction = UIAlertAction(title: "OK", style: .Default){
-                    action -> Void in
-                    // do something if you want
-                }
-                
-                alert.addAction(okAction)
-                
-                self.presentViewController(alert, animated: true, completion: nil)
-            }
-            
-        default:
-            if schedules.count == 0 {
-                runAPI()
-            }
-        }
+        // Initial setup
+        setup()
     }
     
     @IBAction func moveToCurrentSchedule(sender: UIBarButtonItem) {
@@ -161,7 +58,141 @@ extension ScheduleTVC: UISearchResultsUpdating{
         tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: UITableViewScrollPosition.Top, animated: true)
     }
     
+    @IBAction func refresh(sender: UIRefreshControl) {
+        refreshControl?.endRefreshing()
+        
+        if resultSearchController.active {
+            refreshControl?.attributedTitle = NSAttributedString(string: "Aggiornamento non permesso durante la ricerca")
+        } else {
+            runAPI()
+        }
+    }
+    
+    @IBAction func showNearScheduleDetail(sender: UIBarButtonItem) {
+        performSegueWithIdentifier("nearScheduleDetail", sender: sender)
+    }
+    
+    deinit {
+        deregisterObserver("ReachStatusChanged", instance: self)
+        deregisterObserver("ReceivedLocalNotification", instance: self)
+    }
+}
+
+
+extension ScheduleTVC {
+    // The class contains method used for setting up/initialise things
+    
+    func setup(){
+        // The method performs an intial setup
+        
+        // creating the label while data is loading
+        loadingLabel = UILabel(frame: CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height))
+        loadingLabel.text = "Caricamento dati..."
+        loadingLabel.backgroundColor = LIGHTGREY
+        loadingLabel.textColor = DARKGREY
+        loadingLabel.numberOfLines = 0
+        loadingLabel.textAlignment = NSTextAlignment.Center
+        loadingLabel.sizeToFit()
+        self.tableView.backgroundView = loadingLabel
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
+        
+        // Hide bottom buttons
+        nextScheduleButton.title = ""
+        disableNearScheduleButton()
+        
+        // Register the observer for reachability
+        registerObserver("ReachStatusChanged", instance: self, with: #selector(ScheduleTVC.reachabilityStatusChanged))
+        // Register the observer for local notification
+        registerObserver("ReceivedLocalNotification", instance: self, with: #selector(ScheduleTVC.receivedLocalNotification))
+        
+        // Just call it the first time. It will call runAPI() eventually
+        reachabilityStatusChanged()
+        
+        // Beacon setup
+        setupBeacon()
+    }
+}
+
+extension ScheduleTVC {
+    // The class contains methods related to reachability
+    
+    
+    func reachabilityStatusChanged(){
+        // method to execute every time the ReachStatusChanged notification is received (registered through the observer)
+        
+        // reachabilityStatus is a global variable set in AppDelegate.swift
+        switch reachabilityStatus {
+        case NOACCESS:
+            // Move back to the main queue
+            dispatch_async(dispatch_get_main_queue()){
+                // Display the alert
+                let alert = UIAlertController(title: "Accesso Internet Assente", message: "Si pregra di connettersi ad internet", preferredStyle: .Alert)
+                let okAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+                alert.addAction(okAction)
+                self.presentViewController(alert, animated: true, completion: nil)
+            }
+        default:
+            // Well, I have internet access (WIFI or WWAN I don't care)
+            if schedules.count == 0 {
+                // Get data form Internet because schedules is empty
+                runAPI()
+            }
+        }
+    }
+    
+    func runAPI() {
+        // The method updates the time when data was downloaded
+        setRefreshTimestamp()
+        
+        // Instantiate the APIManager
+        let api = APIManager()
+        let urlSchedulesApi = "https://ibeacon.stamplayapp.com/api/cobject/v1/schedule?per_page=all&populate=true&sort=start"
+        // Load the data in background and call didLoadData as callback
+        api.loadData(urlSchedulesApi, completion: didLoadData)
+    }
+    
+    func didLoadData(schedules: [Schedule], locations: [Location]) {
+        // This is the callback of loadData
+        
+        self.schedules = schedules
+        self.locations = locations
+        
+        // Create the sections used to render the table
+        updateSections(self.schedules)
+        
+        // Setup the title
+        title = ("DMI - MRBS")
+        
+        // NavigationController is the bottom part of the view
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: LIGHTGREY]
+        navigationController?.navigationBar.barTintColor = DARKGREY
+        navigationController?.navigationBar.tintColor = LIGHTGREY
+        navigationController?.toolbar.barTintColor = DARKGREY
+        nextScheduleButton.title = "Prossima Lezione"
+        nextScheduleButton.enabled = true
+        
+        // That's the search
+        resultSearchController.searchResultsUpdater = self
+        definesPresentationContext = true
+        // That's very important: if it is true, during search I cannot do anything and when you click on a cell you come back to the original view
+        resultSearchController.dimsBackgroundDuringPresentation = false
+        resultSearchController.searchBar.placeholder = "Cerca..."
+        resultSearchController.searchBar.searchBarStyle = UISearchBarStyle.Prominent
+        tableView.tableHeaderView = resultSearchController.searchBar
+        
+        // Hide the loadingLabel
+        loadingLabel.hidden = true
+        
+        // Reloads the rows and sections of the table view.
+        tableView.reloadData()
+    }
+}
+
+extension ScheduleTVC: UISearchResultsUpdating{
+    // This class contains methods related to the search
+    
     func filterSearch(searchText: String){
+        // The method implements the actual search: it filters elements from schedules depending on the conditions below
         filterSearch = schedules.filter { schedule in
             return schedule.shortDescription.lowercaseString.containsString(searchText.lowercaseString) ||
                 schedule.longDescription.lowercaseString.containsString(searchText.lowercaseString) ||
@@ -173,22 +204,37 @@ extension ScheduleTVC: UISearchResultsUpdating{
         }
         
         if resultSearchController.active {
+            // Recreate the sections depending the search results
             updateSections(filterSearch)
         } else {
+            // Restore the sections with not filtered data
             updateSections(self.schedules)
         }
         
+        // Reloads the rows and sections of the table view.
         tableView.reloadData()
         
     }
     
+    func updateSections(schedules: [Schedule]){
+        // The method categorises schedules array by section header
+        // This is done through an extension of SequenceType (see Utils.swift)
+        self.sectionSchedules = schedules.categorise{sectionHeaderFromDate($0.startingTime)}
+        
+        // Let's have an array of sorted String: this array is used to manage the section itself
+        self.sortedSections = self.sectionSchedules.keys.elements.sort({$0.compare($1) == NSComparisonResult.OrderedAscending })
+    }
+    
     func updateSearchResultsForSearchController(searchController: UISearchController) {
+        // Called when the search bar becomes the first responder or when the user makes changes inside the search bar.
+        // Let's make everything lowercase
         searchController.searchBar.text!.lowercaseString
+        // Does the actual search
         filterSearch(searchController.searchBar.text!)
     }
     
     func setRefreshTimestamp(){
-        // Let's show when the API were run
+        // The method shows when the API were run
         let refreshDate = completeDateFromDate(NSDate())
         refreshControl?.attributedTitle = NSAttributedString(string: "\(refreshDate)")
     }
@@ -196,14 +242,13 @@ extension ScheduleTVC: UISearchResultsUpdating{
 }
 
 extension ScheduleTVC {
-    // MARK: - Table view data source
-    
+    // This class contains method related the rendering of the tableView.
+    // All the methods are implemented because UITableViewController has the following protocols: UITableViewDelegate, UITableViewDataSource
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        
-        
+        // Asks the data source to return the number of sections in the table view
         if self.schedules.count > 0 {
+            // It counts how many sections I have
             return self.sectionSchedules.count
         } else {
             return 0
@@ -211,68 +256,88 @@ extension ScheduleTVC {
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // Tells the data source to return the number of rows in a given section of a table view.
         return self.sectionSchedules[sortedSections[section]]!.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! ScheduleTableViewCell
+        // Asks the data source for a cell to insert in a particular location of the table view.
         
+        // Get the cell from the tableViewController with a specific identifier and reuse the cell to render the data
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! ScheduleTableViewCell
         // get the items in this section
         let sectionItems = self.sectionSchedules[sortedSections[indexPath.section]]
-        // get the item for the row in this section
+        // get the item for the row in this section and assign it to the cell
         cell.schedule = sectionItems![indexPath.row]
-        
         return cell
     }
     
     
-    // This method changes the color of the cells
     override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        // Tells the delegate the table view is about to draw a cell for a particular row.
+        // In this method the color of the cells will be changed depending on the correspondence type
         
         // get the items in this section
         let sectionItems = self.sectionSchedules[sortedSections[indexPath.section]]
         // get the item for the row in this section
         let schedule = sectionItems![indexPath.row]
         
+        // Change the background color depending on the correspondence type
         cell.backgroundColor = correspondenceColor(schedule.correspondence)
+        // Set a border around the cell
         cell.layer.borderWidth = 0.5
         cell.layer.borderColor = DARKGREY.CGColor
     }
     
-    // This method changes the color of the section header
+    
     override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        // Asks the delegate for a view object to display in the header of the specified section of the table view.
+        // In this method the color of the section header will be changed
+        
+        // Crate a view
         let returnedView = UIView(frame: CGRectMake(0, 0, tableView.bounds.size.width, 30))
+        // Set the background colo
         returnedView.backgroundColor = LIGHTGREY
         
+        // Create a label
         let label = UILabel(frame: CGRectMake(10, 0, tableView.bounds.size.width, 30))
+        // Set the text and the color
         label.text = self.sortedSections[section]
         label.textColor = DARKGREY
-        returnedView.addSubview(label)
         
+        // Add the label to the view
+        returnedView.addSubview(label)
         return returnedView
     }
 }
 
 extension ScheduleTVC {
+    // This class contains methods related to the navigation between views
     
-    // MARK: - Navigation
-    
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        // Notifies the view controller that a segue is about to be performed.
+        // In a storyboard-based application, you will often want to do a little preparation before navigation
+        
+        // This segue is triggered when the user tap on a cell
         if segue.identifier == "scheduleDetail" {
+            // Get the path of the cell tapped
             if let indexPath = tableView.indexPathForSelectedRow {
-                
                 // get the items in this section
                 let sectionItems = self.sectionSchedules[sortedSections[indexPath.section]]
                 // get the item for the row in this section
                 let schedule = sectionItems![indexPath.row]
-                
+                // Instantiate the ScheduleDetailsVC
                 let dvc = segue.destinationViewController as! ScheduleDetailsVC
+                // Set the schedule in the ScheduleDetailsVC
                 dvc.schedule = schedule
             }
         }
+        
+        // This segue is triggered when the user tap on the nearScheduleButton
         if segue.identifier == "nearScheduleDetail"{
+            // Instantiate the ScheduleDetailsVC
             let dvc = segue.destinationViewController as! ScheduleDetailsVC
+            // Set the schedule in the ScheduleDetailsVC
             dvc.schedule = self.nearSchedule
         }
     }
@@ -280,133 +345,187 @@ extension ScheduleTVC {
 }
 
 extension ScheduleTVC: CLLocationManagerDelegate {
+    // This class contains methods related to the beacon
     
     func setupBeacon(){
+        // Setup the beacon
         let uuidString = UUIDBeaconApp
         let beaconIdentifier = "jalee"
         let beaconUUID:NSUUID = NSUUID(UUIDString: uuidString)!
         let beaconRegion:CLBeaconRegion = CLBeaconRegion(proximityUUID: beaconUUID, identifier: beaconIdentifier)
         
+        // Requests permission to use location services whenever the app is running
         if(locationManager.respondsToSelector(#selector(CLLocationManager.requestAlwaysAuthorization))) {
             locationManager.requestAlwaysAuthorization()
         }
         
+        // Set the delegate to itself: all the methods are in this class extension
         locationManager.delegate = self
         locationManager.pausesLocationUpdatesAutomatically = false
         
+        // Starts monitoring the specified region: you must call this method once for each region you want to monitor.
         locationManager.startMonitoringForRegion(beaconRegion)
+        
+        // Starts the delivery of notifications for beacons in the specified region.
+        // Once registered, the location manager reports any encountered beacons to its delegate by calling the
+        // locationManager:didRangeBeacons:inRegion: method.
         locationManager.startRangingBeaconsInRegion(beaconRegion)
+        
+        // Starts the generation of updates that report the user’s current location.
         locationManager.startUpdatingLocation()
     }
     
-    func sendLocalNotificationWithMessage(message: String!, playSound: Bool) {
-        let notification:UILocalNotification = UILocalNotification()
-        notification.alertBody = message
-        
-        if(playSound) {
-            notification.soundName = UILocalNotificationDefaultSoundName
+    func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
+        // Tells the delegate that one or more beacons are in range or change (eg. get closer)
+        // I have some beacon around
+        if(beacons.count > 0) {
+            // Get the nearest beacon
+            let nearestBeacon:CLBeacon = beacons[0]
+            
+            // If the beacon's proximity didn't change from last time or it is uknown, it exits
+            if(nearestBeacon.proximity == lastProximity || nearestBeacon.proximity == CLProximity.Unknown) {
+                return;
+            }
+            
+            // Get the new proximity
+            lastProximity = nearestBeacon.proximity;
+            
+            // Depending on the proximity it takes the proper action
+            switch nearestBeacon.proximity {
+            case CLProximity.Far:
+                NSLog("Lontano")
+                disableNearScheduleButton()
+            case CLProximity.Near:
+                NSLog("Vicino")
+                disableNearScheduleButton()
+            case CLProximity.Immediate:
+                NSLog("Immediato")
+                searchLocationSchedule(nearestBeacon)
+            case CLProximity.Unknown:
+                return
+            }
+        } else {
+            // There are no beacons around
+            if(lastProximity == CLProximity.Unknown) {
+                return;
+            }
+            // So the proximity is unknown
+            lastProximity = CLProximity.Unknown
         }
-        
-        UIApplication.sharedApplication().scheduleLocalNotification(notification)
     }
     
-    func searchLocation(nearestBeacon: CLBeacon) {
+    func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        // Tells the delegate that the user entered the specified region.
+        NSLog("Entrato nella regione")
+        // Starts the delivery of notifications for beacons in the specified region.
+        manager.startRangingBeaconsInRegion(region as! CLBeaconRegion)
+        // Starts the generation of updates that report the user’s current location.
+        manager.startUpdatingLocation()
+    }
+    
+    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
+        // Tells the delegate that the user left the specified region.
+        NSLog("Uscito dalla regione")
+        // Stops the delivery of notifications for the specified beacon region.
+        manager.stopRangingBeaconsInRegion(region as! CLBeaconRegion)
+        // Stops the generation of location updates.
+        manager.stopUpdatingLocation()
+        // It disable the nearCheduleButton too
+        disableNearScheduleButton()
+    }
+    
+    func receivedLocalNotification(){
+        // This method is executed whenever a nearScheduleDetail notification is posted
+        // It is the method registered through the observer
+        performSegueWithIdentifier("nearScheduleDetail", sender: nil)
+    }
+    
+    func searchLocationSchedule(nearestBeacon: CLBeacon) {
+        // The method performs the actual search of the location and schedule of the beacon received
+        
+        // The the baacon minor and major
         let locationMinor = nearestBeacon.minor
         let locationMajor = nearestBeacon.major
         
-        let now = NSDate()
-        
+        // Those are the nearest locations, filtering the Location array
         let nearestLocations = self.locations.filter{$0.minor == locationMinor && $0.major == locationMajor}
         
+        // Get the first one matching
         guard let nearestLocation = nearestLocations.first else {return}
+        
+        // Get schedules happening now and in the nearest location
+        let now = NSDate()
         let schedulesLocation = self.schedules.filter{$0.location == nearestLocation && now > $0.startingTime && now < $0.endTime}
+        
+        // Get the first one matching
         guard let schedule = schedulesLocation.first else {return}
         
+        // Depending of the app state, it peforms different actions
         switch UIApplication.sharedApplication().applicationState {
         case .Active:
             //The app is running in the foreground and is receiving events. This is the normal mode for foreground apps.
-            enableNavigationButton(schedule)
+            // It enables nearSchedukeButton
+            enableNearScheduleButton(schedule)
         case .Inactive:
-            // The app is running in the foreground but is currently not receiving events. (It may be executing other code though.) An app usually stays in this state only briefly as it transitions to a different state.
+            // The app is running in the foreground but is currently not receiving events. (It may be executing other code though.)
+            //An app usually stays in this state only briefly as it transitions to a different state.
+            // Send a local notification
             sendLocalNotification(schedule, nearestLocation: nearestLocation)
         case .Background:
             // The app is in the background and executing code
+            // Send a local notification
             sendLocalNotification(schedule, nearestLocation: nearestLocation)
         }
     }
     
-    
-    @IBAction func showNearScheduleDetail(sender: UIBarButtonItem) {
-        performSegueWithIdentifier("nearScheduleDetail", sender: sender)
-    }
-    
-    func enableNavigationButton(schedule: Schedule){
-        nearScheduleButton.title = schedule.location.name
-        nearScheduleButton.enabled = true
+    func enableNearScheduleButton(schedule: Schedule){
+        // The method enable nearScheduleButton
         self.nearSchedule = schedule
+        // Set the title of the button
+        nearScheduleButton.title = schedule.location.name
+        // Enable the buttin
+        nearScheduleButton.enabled = true
+        // Play a sound notification in app
+        // create a sound ID - https://github.com/TUNER88/iOSSystemSoundsLibrary
+        let systemSoundID: SystemSoundID = 1113
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+        AudioServicesPlaySystemSound(systemSoundID)
     }
     
-    func disableNavigationButton(){
+    func disableNearScheduleButton(){
+        // The method disables nearScheduleButton
         nearScheduleButton.title = ""
         nearScheduleButton.enabled = false
         self.nearSchedule = nil
     }
     
     func sendLocalNotification(schedule: Schedule, nearestLocation: Location){
+        // This is very important: nearSchedule has now schedule which will be used when the user opens the app from the notification
+        self.nearSchedule = schedule
         var notificationMessage = ""
+        // Notification message depends on the schedule type
         if schedule.exam == true {
             notificationMessage = "Esame di \"\(schedule.shortDescription)\" in corso in \"\(nearestLocation.name)\""
         } else {
             notificationMessage = "Lezione di \"\(schedule.shortDescription)\" in corso in \"\(nearestLocation.name)\""
         }
         
+        // Send out the notification
         sendLocalNotificationWithMessage(notificationMessage, playSound: true)
     }
     
-    
-    func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
-        if(beacons.count > 0) {
-            let nearestBeacon:CLBeacon = beacons[0]
-            if(nearestBeacon.proximity == lastProximity || nearestBeacon.proximity == CLProximity.Unknown) {
-                return;
-            }
-            
-            lastProximity = nearestBeacon.proximity;
-            
-            switch nearestBeacon.proximity {
-            case CLProximity.Far:
-                NSLog("far")
-                disableNavigationButton()
-            case CLProximity.Near:
-                NSLog("near")
-                disableNavigationButton()
-            case CLProximity.Immediate:
-                NSLog("immediate")
-                searchLocation(nearestBeacon)
-            case CLProximity.Unknown:
-                return
-            }
-        } else {
-            if(lastProximity == CLProximity.Unknown) {
-                return;
-            }
-            lastProximity = CLProximity.Unknown
+    func sendLocalNotificationWithMessage(message: String!, playSound: Bool) {
+        // The method sends a local notification
+        // Create the notification
+        let notification:UILocalNotification = UILocalNotification()
+        // Set the message
+        notification.alertBody = message
+        
+        // Set the notification sound
+        if(playSound) {
+            notification.soundName = UILocalNotificationDefaultSoundName
         }
-    }
-    
-    func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        manager.startRangingBeaconsInRegion(region as! CLBeaconRegion)
-        manager.startUpdatingLocation()
-        NSLog("enter")
-    }
-    
-    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
-        manager.stopRangingBeaconsInRegion(region as! CLBeaconRegion)
-        manager.stopUpdatingLocation()
-        disableNavigationButton()
-        NSLog("exit")
+        // Schedule the notification
+        UIApplication.sharedApplication().scheduleLocalNotification(notification)
     }
 }
-
-
-
