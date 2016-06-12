@@ -13,8 +13,7 @@ import UIKit
 func timestampFromString(dateString:String) -> NSDate {
     // The function converts a string to a NSDate object
     let dateFormatter = NSDateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-    dateFormatter.timeZone = NSTimeZone(name: "Europe/London")
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     let date: NSDate = dateFormatter.dateFromString(dateString)!
     return date
 }
@@ -23,7 +22,6 @@ func stringFromDate(date:NSDate, with format:String) -> String {
     // The function returns a string representing a formatted date
     let dateFormatter = NSDateFormatter()
     dateFormatter.dateFormat = format
-    dateFormatter.timeZone = NSTimeZone(name: "Europe/London")
     let string: String = dateFormatter.stringFromDate(date)
     return string
 }

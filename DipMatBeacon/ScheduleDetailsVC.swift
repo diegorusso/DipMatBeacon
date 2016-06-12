@@ -33,51 +33,66 @@ class ScheduleDetailsVC: UIViewController {
     @IBOutlet weak var lastChange: UILabel!
 
     override func viewDidLoad() {
+        // Called after the controller's view is loaded into memory.
         super.viewDidLoad()
+        // It sets all the labels in the view
         setLabels()
     }
     
     override func viewWillAppear(animated: Bool) {
+        // This method is called before the view controller's view is about to be added to a view
+        // hierarchy and before any animations are configured for showing the view.
+        // You can override this method to perform custom tasks associated with displaying the view.
         super.viewWillAppear(false)
         view.backgroundColor = correspondenceColor(schedule.correspondence)
     }
     
-    
     @IBAction func shareSchedule(sender: UIBarButtonItem) {
+        // This is executed whenever the user tap on share button
         touchIDCheck()
     }
 
 }
 
 extension ScheduleDetailsVC {
+    // In this class extension I define all custom methods
 
     func setLabels(){
+        // It sets all the labels in the view
+        
+        // The title is the location name
         title = schedule.location.name
         
+        // Top side of the view
         shortDescription.text = schedule.shortDescription
         longDescription.text = schedule.longDescription
         professor.text = schedule.professor
         
+        // Depending on the exam value, the icon changes
         if schedule.exam {
             exam.image = UIImage(named: "exam.png")
         } else {
             exam.image = UIImage(named: "lecture.png")
         }
         
+        // Temporal data
         date.text = ISODateFromDate(schedule.startingTime)
         fromTo.text = "\(timeFromDate(schedule.startingTime)) - \(timeFromDate(schedule.endTime))"
         duration.text = schedule.duration
         
+        // Location data
         room.text = schedule.location.name
         floor.text = schedule.location.floor
         building.text = schedule.location.building
         
+        // Depending on the approval, the icon changes
         if schedule.approved {
             approved.image = UIImage(named: "approved.png")
         } else {
             approved.image = UIImage(named: "notApproved.png")
         }
         
+        // Other details
         createdBy.text = schedule.createdBy
         correspondence.text = schedule.correspondence
         bookingType.text = schedule.bookingType
@@ -85,9 +100,12 @@ extension ScheduleDetailsVC {
     }
     
     func shareScheduleDetails(){
-        let activity1:String
-        let activity5:String
+        // I creates the UIActivityViewController filled with the right information
         
+        // Those strings will be used to create the UIActivityViewController
+        let activity1, activity2, activity3, activity4, activity5, activity6, activity7:String
+        
+        // Depeding on the exam value, activity1 and activity5 change
         if schedule.exam {
             activity1 = "L'esame \"\(schedule.shortDescription)\""
             activity5 = "Si prega di arrivare in orario altrimenti non si avrà diritto a sostenere l'esame."
@@ -95,41 +113,44 @@ extension ScheduleDetailsVC {
             activity1 = "La lezione \"\(schedule.shortDescription)\""
             activity5 = ""
         }
-        let activity2 = "del professore \(schedule.professor)"
-        let activity3 = "si svolgerà il giorno \(ISODateFromDate(schedule.startingTime)) dalle \(timeFromDate(schedule.startingTime)) alle \(timeFromDate(schedule.endTime))"
-        let activity4 = "in \"\(schedule.location.name)\" (piano \(schedule.location.floor) di \(schedule.location.building))."
-        let activity6 = "L'utilizzo di dispositivi mobili non è ammesso."
+        // It sets other strings activity
+        activity2 = "del professore \(schedule.professor)"
+        activity3 = "si svolgerà il giorno \(ISODateFromDate(schedule.startingTime)) dalle \(timeFromDate(schedule.startingTime)) alle \(timeFromDate(schedule.endTime))"
+        activity4 = "in \"\(schedule.location.name)\" (piano \(schedule.location.floor) di \(schedule.location.building))."
+        activity6 = "L'utilizzo di dispositivi mobili non è ammesso."
+        activity7 = "\n\n(Condiviso automaticamente tramite l'app DipMatBeacon)"
         
-        let activity7 = "\n\n(Condiviso automaticamente tramite l'app DipMatBeacon)"
+        // Create the UIActivityViewController with above strings
+        let activityViewController = UIActivityViewController(activityItems: [activity1, activity2, activity3, activity4, activity5, activity6, activity7], applicationActivities: nil)
         
-        let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [activity1, activity2, activity3, activity4, activity5, activity6, activity7], applicationActivities: nil)
-        
-        // To disable email sharing
+        // I might disable email sharing
         //activityViewController.excludedActivityTypes = [UIActivityTypeMail]
         
-        activityViewController.completionWithItemsHandler = {
+        // I might define a handler to complete the sharing action
+        /*activityViewController.completionWithItemsHandler = {
             (activity, success, items, error) in
             
             if activity == UIActivityTypeMail {
                 NSLog("Email selected")
             }
-        }
+        }*/
         
+        // Finally I present theUIActivityViewController
         self.presentViewController(activityViewController, animated: true, completion: nil)
     }
     
     func touchIDCheck(){
-        // Create an alert
-        let alert = UIAlertController(title: "", message: "", preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: "Continue", style: .Cancel, handler: nil))
+        // This method is responsible to authenticate the user through TouchID
         
         // Create the local Authentication Context
         let context = LAContext()
+        // NSError to store errors
         var touchIDError:NSError?
-        let reasonString = "TouchID authentication is needed to share info on Social Media"
+        // This is the reason we need access to TouchID
+        let reasonString = "Autenticazione tramite TouchID necessaria per condividere i dettagli"
         
         // Check if we can access local device authentication
-        if context.canEvaluatePolicy(LAPolicy.DeviceOwnerAuthenticationWithBiometrics, error:&touchIDError){
+        if context.canEvaluatePolicy(LAPolicy.DeviceOwnerAuthenticationWithBiometrics, error:&touchIDError) {
             // Check what the authentication response was
             context.evaluatePolicy(LAPolicy.DeviceOwnerAuthenticationWithBiometrics, localizedReason: reasonString, reply: { (success, policyError) -> Void in
                 if success {
@@ -138,51 +159,58 @@ extension ScheduleDetailsVC {
                         self.shareScheduleDetails()
                     }
                 } else {
-                    alert.title = "Unsuccessful!"
+                    // Set the error alert message with more information
+                    let message: String?
                     switch LAError(rawValue: policyError!.code)!{
                     case .AppCancel:
-                        alert.message = "Authentication was cancelled by application"
+                        message = "Autenticazione cancellata dall'applicazione"
                     case .AuthenticationFailed:
-                        alert.message = "The user failed to provide valid credentials"
+                        message = "Autenticazione fallita"
                     case .PasscodeNotSet:
-                        alert.message = "Passcode is not set on the device"
+                        message = "Passcode non impostato sul dispositivo"
                     case .SystemCancel:
-                        alert.message = "Authentication was cancelled by the system"
+                        message = "Autenticazione cancellata dal sistema"
                     case .TouchIDLockout:
-                        alert.message = "Too many failed attempts"
+                        message = "Troppi tentativi falliti"
                     case .UserCancel:
-                        alert.message = "You cancelled the request"
+                        message = "Autenticazione cancellata dall'utente"
                     case .UserFallback:
-                        alert.message = "Password not accepted, must use TouchID"
+                        message = "Password non accettata, TouchID deve essere utilizzato"
                     default:
-                        alert.message = "Unable to Authenticate"
+                        message = "Impossibile autenticare"
                     }
+                    
+                    // Create the alert
+                    let alert = UIAlertController(title: "Senza Successo", message: message, preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: "Continua", style: .Cancel, handler: nil))
                     
                     // Show the alert
                     dispatch_async(dispatch_get_main_queue()) { [unowned self] in
                         self.presentViewController(alert, animated: true, completion: nil)
                     }
                 }
-            })
+            }) // ends evaluatePolicy
         } else {
             // Unable to access local device authentication
             
-            // Set the error title
-            alert.title = "Error"
-            
             // Set the error alert message with more information
+            let message: String?
             switch LAError(rawValue: touchIDError!.code)! {
             case .TouchIDNotEnrolled:
-                alert.message = "TouchID is not enrolled"
+                message = "TouchID non configurato"
             case .TouchIDNotAvailable:
-                alert.message = "TouchID is not available on the device"
+                message = "TouchID non disponibile"
             case .PasscodeNotSet:
-                alert.message = "Passcode has not been set"
+                message = "Passcode non impostato"
             case .InvalidContext:
-                alert.message = "The context is invalid"
+                message = "Il contesto é invalido"
             default:
-                alert.message = "Local Authentication not available"
+                message = "Autenticazione Locale non disponibile"
             }
+            
+            // Create the alert
+            let alert = UIAlertController(title: "Errore", message: message, preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Continua", style: .Cancel, handler: nil))
             
             // Show the alert
             dispatch_async(dispatch_get_main_queue()) { [unowned self] in
@@ -190,6 +218,4 @@ extension ScheduleDetailsVC {
             }
         }
     }
-
-
 }
