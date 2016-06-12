@@ -42,7 +42,10 @@ class ScheduleTVC: UITableViewController {
         setup()
     }
     
-    @IBAction func moveToCurrentSchedule(sender: UIBarButtonItem) {
+    @IBAction func moveToNextSchedule(sender: UIBarButtonItem) {
+        // This method is executed whenever the user taps on nextSchedule button
+        
+        // Find the nearest section
         let now = NSDate()
         let currentTimeSectionHeader = sectionHeaderFromDate(now)
         var nearestSection = 0
@@ -54,25 +57,34 @@ class ScheduleTVC: UITableViewController {
             }
         }
         
+        // Get the indePath of the nearestSection
         let indexPath = NSIndexPath(forItem: 0, inSection: nearestSection)
+        // Scroll the table to the section just found
         tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: UITableViewScrollPosition.Top, animated: true)
     }
     
     @IBAction func refresh(sender: UIRefreshControl) {
-        refreshControl?.endRefreshing()
+        // The method is executed whenever the user pulls down the table and forces the refresh
         
+        // It is not allow to refresh while searching
         if resultSearchController.active {
             refreshControl?.attributedTitle = NSAttributedString(string: "Aggiornamento non permesso durante la ricerca")
         } else {
+            // Get the new data
             runAPI()
         }
+        
+        // Tells the control that a refresh operation has ended.
+        refreshControl?.endRefreshing()
     }
     
     @IBAction func showNearScheduleDetail(sender: UIBarButtonItem) {
+        // This method is executed whenere the user tap on nearSchedule button
         performSegueWithIdentifier("nearScheduleDetail", sender: sender)
     }
     
     deinit {
+        // Destructor: observers need to be deregistered
         deregisterObserver("ReachStatusChanged", instance: self)
         deregisterObserver("ReceivedLocalNotification", instance: self)
     }

@@ -99,7 +99,7 @@
                         <barButtonItem enabled="NO" title="nextLecture" id="meM-v9-XJT">
                             <color key="tintColor" red="0.90588235289999997" green="0.92156862750000001" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
-                                <action selector="moveToCurrentSchedule:" destination="Xcr-xK-7qo" id="KZs-We-0P8"/>
+                                <action selector="moveToNextSchedule:" destination="Xcr-xK-7qo" id="RGy-Mc-A3U"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem style="plain" systemItem="flexibleSpace" id="B3s-Rh-crD"/>
