@@ -59,10 +59,21 @@ class ScheduleTVC: UITableViewController {
             }
         }
         
-        // Get the indePath of the nearestSection
-        let indexPath = NSIndexPath(forItem: 0, inSection: nearestSection)
-        // Scroll the table to the section just found
-        tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: UITableViewScrollPosition.Top, animated: true)
+        if nearestSection > 0 {
+            // Get the indePath of the nearestSection
+            let indexPath = NSIndexPath(forItem: 0, inSection: nearestSection)
+            // Scroll the table to the section just found
+            tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: UITableViewScrollPosition.Top, animated: true)
+        } else {
+            // Create the alert
+            let alert = UIAlertController(title: "Non ci sono più lezioni", message: "", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
+            // Show the alert
+            dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+                self.presentViewController(alert, animated: true, completion: nil)
+            }
+        
+        }
     }
     
     @IBAction func refresh(sender: UIRefreshControl) {
