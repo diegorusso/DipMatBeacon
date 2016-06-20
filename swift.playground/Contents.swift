@@ -1,7 +1,5 @@
 //: Playground - noun: a place where people can play
 
-import UIKit
-
 // That's a good start
 print("Hello, playground")
 

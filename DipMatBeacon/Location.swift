@@ -9,7 +9,7 @@
 import Foundation
 
 
-class Location: Hashable, Equatable {
+class Location: Hashable {
     // Location Model
     
     // Data Encapsulation - can be set only within the class
@@ -33,7 +33,7 @@ class Location: Hashable, Equatable {
     }
     
     var hashValue: Int {
-        // Protocol Equatable requires property 'hashValue' with type 'Int'
+        // Protocol Hashable requires property 'hashValue' with type 'Int'
         get {
             return self.id.hashValue
         }

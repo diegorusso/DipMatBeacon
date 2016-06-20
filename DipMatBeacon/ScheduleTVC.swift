@@ -69,7 +69,7 @@ class ScheduleTVC: UITableViewController {
             let alert = UIAlertController(title: "Non ci sono più lezioni", message: "", preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: nil))
             // Show the alert
-            dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+            dispatch_async(dispatch_get_main_queue()) { [unowned self] in // unowned is like weak bun unlike weak it is assumed to always have a value
                 self.presentViewController(alert, animated: true, completion: nil)
             }
         
@@ -107,7 +107,7 @@ class ScheduleTVC: UITableViewController {
 
 
 extension ScheduleTVC {
-    // The class contains method used for setting up/initialise things
+    // The extension contains method used for setting up/initialise things
     
     func setup(){
         // The method performs an intial setup
@@ -141,7 +141,7 @@ extension ScheduleTVC {
 }
 
 extension ScheduleTVC {
-    // The class contains methods related to reachability
+    // The extension contains methods related to reachability
     
     
     func reachabilityStatusChanged(){
@@ -220,7 +220,7 @@ extension ScheduleTVC {
 }
 
 extension ScheduleTVC: UISearchResultsUpdating{
-    // This class contains methods related to the search
+    // This extension contains methods related to the search
     
     func filterSearch(searchText: String){
         // The method implements the actual search: it filters elements from schedules depending on the conditions below
@@ -274,7 +274,7 @@ extension ScheduleTVC: UISearchResultsUpdating{
 }
 
 extension ScheduleTVC {
-    // This class contains method related the rendering of the tableView.
+    // This extension contains method related the rendering of the tableView.
     // All the methods are implemented because UITableViewController has the following protocols: UITableViewDelegate, UITableViewDataSource
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -344,7 +344,7 @@ extension ScheduleTVC {
 }
 
 extension ScheduleTVC {
-    // This class contains methods related to the navigation between views
+    // This extension contains methods related to the navigation between views
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         // Notifies the view controller that a segue is about to be performed.
@@ -378,12 +378,12 @@ extension ScheduleTVC {
 }
 
 extension ScheduleTVC: CLLocationManagerDelegate {
-    // This class contains methods related to the beacon
+    // This extension contains methods related to the beacon
     
     func setupBeacon(){
         // Setup the beacon
         let uuidString = UUIDBeaconApp
-        let beaconIdentifier = "jalee"
+        let beaconIdentifier = "jaalee"
         let beaconUUID:NSUUID = NSUUID(UUIDString: uuidString)!
         let beaconRegion:CLBeaconRegion = CLBeaconRegion(proximityUUID: beaconUUID, identifier: beaconIdentifier)
         
