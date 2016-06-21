@@ -29,12 +29,14 @@ let widthLabel2 = "The width is \(width)"
 
 var shoppingList = ["catfish", "water", "tulips", "blue paint"]
 shoppingList[1] = "bottle of water"
+shoppingList
 
 var occupations = [
     "Malcolm": "Captain",
     "Kaylee": "Mechanic",
 ]
 occupations["Jayne"] = "Public Relations"
+occupations
 
 // Empty Arrays
 let emptyArray = [String]()
@@ -51,9 +53,13 @@ occupations = [:]
 
 var optionalString: String? = "Hello"
 print(optionalString == nil)
+print(optionalString)
+// Unwrapped
+print(optionalString!)
 
 var optionalName: String? = "John Appleseed"
 var greeting = "Hello!"
+// It can be tested
 if let name = optionalName {
     greeting = "Hello, \(name)"
 }
